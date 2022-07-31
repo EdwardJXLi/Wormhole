@@ -1,2 +1,5 @@
 flask
+flask_socketio
 flask_cors
+gevent
+gevent-websocket
