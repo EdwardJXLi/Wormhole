@@ -1,2 +1,2 @@
 # Wormhole
-Video and Webcam Streaming over the Network with Python
+A simple and hackable Video, Webcam, Message, and Data Streaming Library in Python

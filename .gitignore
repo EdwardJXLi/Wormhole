@@ -1,0 +1,6 @@
+__pycache__
+venv
+
+# Personal testing folder I use
+wormhole_testing
+testing.py
