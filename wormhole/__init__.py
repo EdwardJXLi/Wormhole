@@ -4,7 +4,8 @@ monkey.patch_all()
 from typing import Type, Optional
 # from multiprocessing import Process
 from threading import Thread
-from flask import request, escape
+from flask import request
+from markupsafe import escape
 
 from wormhole.video import AbstractVideo
 from wormhole.controller import AbstractController, FlaskController
@@ -177,6 +178,7 @@ class Wormhole():
         if not self.advanced_features:
             raise Exception("Managed Streams Are Only Enabled If Advanced Features Are Enabled!")
         
+        name = name.lower()
         if name not in self.managed_streams:
             raise Exception(f"Stream {name} Was Not Found!")
         
@@ -187,6 +189,7 @@ class Wormhole():
         if not self.advanced_features:
             raise Exception("Managed Streams Are Only Enabled If Advanced Features Are Enabled!")
         
+        name = name.lower()
         raise NotImplementedError()
     
     def add_streamer(self, streamer: Type[AbstractStreamer], *args, **kwargs):
