@@ -6,7 +6,7 @@ from wormhole.utils import FrameController
 
 # General Abstract Video Class for Wormhole. Has some advanced features that are helpful for video processing
 class AbstractVideo():
-    def __init__(self, height, width, max_fps=30):
+    def __init__(self, height: int, width: int, max_fps: int = 30):
         # Basic Video Properties
         self.height: int = height
         self.width: int = width

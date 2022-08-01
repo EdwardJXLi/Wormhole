@@ -24,6 +24,7 @@ class Wormhole():
         
         # Set Up Streamers
         self.streamers: dict[str, AbstractStreamer] = {}
+        self.managedStreamers: dict[str, list[str]]
         
         # Set up welcome screen
         if welcome_screen:
