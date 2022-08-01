@@ -1,4 +1,5 @@
 from wormhole.viewer import AbstractViewer
+from wormhole.utils import FrameController
 
 from threading import Thread
 import cv2
@@ -8,6 +9,57 @@ import traceback
 
 # Viewer for the Motion JPEG video protocol
 class MJPEGViewer(AbstractViewer):
+    def __init__(self, url: str, height: int, width: int, max_fps: int = 30, auto_reconnect: bool = False):
+        # Save basic variables about stream
+        self.url = url
+        self.auto_reconnect = auto_reconnect
+        
+        # Open Video Link
+        self.cap = cv2.VideoCapture(self.url)
+        # Set height and width
+        # height = height or int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        # width = width or int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        
+        super().__init__(height, width, max_fps=max_fps)
+        
+        # Check if Video File Opened
+        if not self.cap.isOpened():
+            raise ValueError("Video File Not Opened! An Error Probably Occurred.")
+        # Set up Frame Controller
+        self.frame_controller = FrameController(self.max_fps)
+        
+        # Start Video Thread
+        self.video_decoder_thread = Thread(target=self.video_decoder, daemon = True)
+        self.video_decoder_thread.start()
+        
+    def video_decoder(self):
+        # Start Video Loop
+        while True:
+            # Read Frame
+            ret, frame = self.cap.read()
+            # Check if Frame is Valid
+            if not ret:
+                if self.auto_reconnect:
+                    retry_fc = FrameController(1)
+                    while True:
+                        self.cap = cv2.VideoCapture(self.url)
+                        if not self.cap.isOpened():
+                            print("Failed to connect to stream... Retrying in 1 second...")
+                            retry_fc.next_frame()
+                        else:
+                            print("Stream Reconnected!")
+                            # Reset fps stats for video controller
+                            self.frame_controller.reset_fps_stats()
+                            break
+                    continue
+                else:
+                    self.set_blank_frame()                 
+            # Set Frame
+            self.set_frame(frame)
+            self.frame_controller.next_frame()
+        
+# Alternative implementation of the MJPEGViewer class
+class MJPEGViewerRaw(AbstractViewer):
     def __init__(self, url: str, height: int, width: int, max_fps: int = 30):
         # Save basic variables about stream
         self.url = url
@@ -36,4 +88,3 @@ class MJPEGViewer(AbstractViewer):
             except Exception as e:
                 print(f"Open Camera Error: {e}")
                 traceback.print_exc()
-        

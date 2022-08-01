@@ -141,9 +141,9 @@ class Wormhole():
         # Initialize File Video
         from wormhole.video.filevideo import FileVideo
         video = FileVideo(filename, *args, **kwargs)
-        self.add_managed_stream(video, name=name, protocols=protocols)
+        self.stream_video(video, name=name, protocols=protocols)
         
-    def add_managed_stream(self, video: AbstractVideo, name: str = "default", protocols: Optional[list[str]] = None):
+    def stream_video(self, video: AbstractVideo, name: str = "default", protocols: Optional[list[str]] = None):
         # Check if advanced features are enabled
         if not self.advanced_features:
             raise Exception("Managed Streams Are Only Enabled If Advanced Features Are Enabled!")
@@ -167,7 +167,7 @@ class Wormhole():
             # Get the streamer class
             streamer, _ = self.supported_protocols[proto]
             # Initialize the streamer
-            self.add_streamer(streamer, video, f"/wormhole/stream/{name}/{proto.lower()}", ignore_url_check=True)
+            self.add_stream(streamer, video, f"/wormhole/stream/{name}/{proto.lower()}", ignore_url_check=True)
             
         # Add the streamer to the list of managed streams
         self.managed_streams[name] = (video, protocols)
@@ -192,7 +192,7 @@ class Wormhole():
         name = name.lower()
         raise NotImplementedError()
     
-    def add_streamer(self, streamer: Type[AbstractStreamer], *args, **kwargs):
+    def add_stream(self, streamer: Type[AbstractStreamer], *args, **kwargs):
         # Initialize Streamer
         streamer_obj = streamer(self.controller, *args, **kwargs)
         # Add Streamer to Wormhole

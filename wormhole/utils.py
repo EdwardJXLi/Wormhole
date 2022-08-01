@@ -40,3 +40,6 @@ class FrameController():
         self.actual_fps = self.frames_rendered / (time.time() - self.start_time)
         if self.print_fps:
             print("Frame Rate", self.actual_fps)
+            
+    def reset_fps_stats(self):
+        self.__init__(self.target_fps, self.print_fps)
