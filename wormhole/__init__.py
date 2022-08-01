@@ -4,7 +4,7 @@ monkey.patch_all()
 from typing import Type, Optional
 # from multiprocessing import Process
 from threading import Thread
-from flask import request
+from flask import request, escape
 
 from wormhole.video import AbstractVideo
 from wormhole.controller import AbstractController, FlaskController
@@ -62,6 +62,7 @@ class Wormhole():
                     "<h1>Welcome to Wormhole!</h1>"
                     "<h3>If you see this page, Wormhole Video Streaming Server is successfully installed and working!</h3>"
                     f"<p>Version: {__version__}</p>"
+                    f"{self.generate_debug_html() if self.controller.debug else ''}"  # type: ignore
                 )
             self.controller.add_route("/", hello_world, strict_slashes=False)
             
@@ -193,6 +194,21 @@ class Wormhole():
         streamer_obj = streamer(self.controller, *args, **kwargs)
         # Add Streamer to Wormhole
         self.routes[streamer_obj.route] = streamer_obj
+        
+    def generate_debug_html(self):
+        output = ""
+        output += "<h2>Debug Information</h2>"
+        output += f"<h3>Advanced Features Enabled: {self.advanced_features}</h3>"
+        output += f"<h3>Supported Protocols:</h3>"
+        for proto, (streamer, viewer) in self.supported_protocols.items():
+            output += f"<p>[{proto}] Streamer: {escape(streamer)} | Viewer: {escape(viewer)}<p>"
+        output += f"<h3>Enabled Routes:</h3>"
+        for route in self.routes:
+            output += f"<p>{route}</p>"
+        output += f"<h3>Managed Streams:</h3>"
+        for name, (video, protocols) in self.managed_streams.items():
+            output += f"<p>{name} | {escape(video)} | {protocols}</p>"
+        return output
         
 # Lightweight Wormhole Class for Just Reading Streams
 class WormholeClient():
