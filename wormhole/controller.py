@@ -2,6 +2,7 @@ from typing import Callable, Any
 from flask import Flask
 from flask_socketio import SocketIO
 from flask_cors import CORS
+import uuid
 
 class AbstractController():
     def __init__(self, *args, **kwargs):
@@ -45,9 +46,17 @@ class FlaskController(AbstractController):
         if cors:
             CORS(self.app)
             
+        # Set logging if debug
+        if self.debug:
+            import logging
+            logging.basicConfig(level=logging.DEBUG)
+            
+        # Monkey Patch _is_setup_finished so that dynamic route additions are allowed
+        self.app._is_setup_finished = lambda: False
+            
     def add_route(self, route: str, handler: Callable, *args, **kwargs):
         # Hot-add handler for route
-        self.app.add_url_rule(route, view_func=handler, *args, **kwargs)
+        self.app.add_url_rule(route, endpoint=str(uuid.uuid4()), view_func=handler, *args, **kwargs)
     
     def add_message_handler(self, message: str, handler: Callable, *args, **kwargs):
         # Hot-add handler for socketio message
@@ -56,4 +65,4 @@ class FlaskController(AbstractController):
         
     def start_server(self, *args, **kwargs):
         # self.app.run(host=self.host, port=self.port, *args, **kwargs)
-        self.socketio.run(self.app, host=self.host, port=self.port, debug=self.debug, use_reloader=False, *args, **kwargs)
+        self.socketio.run(self.app, log_output=self.debug, host=self.host, port=self.port, debug=self.debug, use_reloader=False, *args, **kwargs)

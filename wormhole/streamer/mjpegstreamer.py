@@ -7,19 +7,19 @@ import cv2
 # Streamer for the Motion JPEG video protocol
 class MJPEGStreamer(AbstractStreamer):
     def __init__(self, *args, boundary: str = "WORMHOLE", **kwargs):
-        self.frame_controller = FrameController(self.frame_rate)
         super().__init__(*args, **kwargs)
 
         # Create Video Feed Handler for Flask
         def video_feed():
             # Render and Send Frames for each client
             def generate_next_frame():
+                frame_controller = FrameController(self.frame_rate)
                 while True:
                     _, jpg = cv2.imencode(
                         ".jpg", self.video.get_frame()
                     )
                     yield (b"--" + boundary.encode("ascii") + b"\r\nContent-Type: image/jpeg\r\n\r\n" + jpg.tobytes() + b"\r\n")
-                    self.frame_controller.next_frame()
+                    frame_controller.next_frame()
 
             return Response(
                 generate_next_frame(),

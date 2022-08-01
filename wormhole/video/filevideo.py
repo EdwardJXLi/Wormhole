@@ -24,7 +24,6 @@ class FileVideo(AbstractVideo):
         # Set height and width
         height = height or int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         width = width or int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-        print(height, width)
         # Initialize Video Object
         super().__init__(height, width, max_fps)
         # Check if Video File Opened
