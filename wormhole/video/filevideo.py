@@ -20,16 +20,18 @@ class FileVideo(AbstractVideo):
         # Optional Video Properties
         self.repeat: bool = repeat
         # Open Video File
-        self.video = cv2.VideoCapture(self.filename)
+        self.cap = cv2.VideoCapture(self.filename)
         # Set height and width
-        height = height or int(self.video.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        width = width or int(self.video.get(cv2.CAP_PROP_FRAME_WIDTH))
+        height = height or int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        width = width or int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         print(height, width)
         # Initialize Video Object
         super().__init__(height, width, max_fps)
         # Check if Video File Opened
-        if not self.video.isOpened():
+        if not self.cap.isOpened():
             raise ValueError("Video File Not Opened!")
+        # Set up Frame Controller
+        self.frame_controller = FrameController(self.max_fps)
         # Start Video Thread
         self.video_thread = Thread(target=self.video_loop)
         self.video_thread.daemon = True
@@ -37,17 +39,16 @@ class FileVideo(AbstractVideo):
         
     def video_loop(self):
         # Start Video Loop
-        fc = FrameController(self.max_fps)
         while True:
             # Read Frame
-            ret, frame = self.video.read()
+            ret, frame = self.cap.read()
             # Check if Frame is Valid
             if not ret:
                 if self.repeat:
-                    self.video.set(cv2.CAP_PROP_POS_FRAMES, 0)
+                    self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
                 else:
                     self.set_blank_frame()
                 continue
             # Set Frame
             self.set_frame(frame)
-            fc.next_frame()
+            self.frame_controller.next_frame()

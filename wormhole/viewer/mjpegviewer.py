@@ -1,12 +1,10 @@
 from wormhole.viewer import AbstractViewer
-from wormhole.utils import FrameController
 
 import cv2
 import urllib.request
 import numpy as np
 import traceback
 import threading
-from time import sleep
 
 # Viewer for the Motion JPEG video protocol
 class MJPEGViewer(AbstractViewer):

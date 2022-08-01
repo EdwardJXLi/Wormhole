@@ -75,11 +75,11 @@ class AbstractVideo():
         self.set_frame(new_frame)
         
 def render_video(video: AbstractVideo, height: int = 720, width: int = 1280, fps: int = 30):
-    fc = FrameController(fps)
+    frame_controller = FrameController(fps)
     while True:
         frame = video.get_frame()
         cv2.imshow('frame', cv2.resize(frame, (width, height)))
         if cv2.waitKey(1) == ord('q'):
             break
-        fc.next_frame()
+        frame_controller.next_frame()
     cv2.destroyAllWindows()
