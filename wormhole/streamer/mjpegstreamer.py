@@ -5,7 +5,7 @@ from flask.wrappers import Response
 import cv2
 
 # Streamer for the Motion JPEG video protocol
-class MJpegStreamer(AbstractStreamer):
+class MJPEGStreamer(AbstractStreamer):
     def __init__(self, *args, boundary: str = "WORMHOLE", **kwargs):
         super().__init__(*args, **kwargs)
 

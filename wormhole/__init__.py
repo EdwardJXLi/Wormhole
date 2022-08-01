@@ -4,6 +4,7 @@ from typing import Type
 from threading import Thread
 
 from wormhole.controller import AbstractController, FlaskController
+from wormhole.streamer import AbstractStreamer
 
 # Entrypoint for everything WORMHOLE!
 class Wormhole():
@@ -21,6 +22,9 @@ class Wormhole():
         # Create Controller
         self.controller = network_controller(*args, **kwargs)
         
+        # Set Up Streamers
+        self.streamers: dict[str, AbstractStreamer] = {}
+        
         # Set up welcome screen
         if welcome_screen:
             def hello_world():
@@ -31,6 +35,12 @@ class Wormhole():
         self.wormhole_thread = Thread(target=self.controller.start_server)
         self.wormhole_thread.daemon = True
         self.wormhole_thread.start()
+        
+    def add_streamer(self, streamer: Type[AbstractStreamer], *args, **kwargs):
+        # Initialize Streamer
+        streamer_obj = streamer(self.controller, *args, **kwargs)
+        # Add Streamer to Wormhole
+        self.streamers[streamer_obj.route] = streamer_obj
         
 # Lightweight Wormhole Class for Just Reading Streams
 class WormholeClient():
