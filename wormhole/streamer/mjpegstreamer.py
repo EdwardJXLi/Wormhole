@@ -13,7 +13,7 @@ class MJPEGStreamer(AbstractStreamer):
         def video_feed():
             # Render and Send Frames for each client
             def generate_next_frame():
-                frame_controller = FrameController(self.frame_rate)
+                frame_controller = FrameController(self.video.max_fps)
                 while True:
                     _, jpg = cv2.imencode(
                         ".jpg", self.video.get_frame()
@@ -27,4 +27,4 @@ class MJPEGStreamer(AbstractStreamer):
             )
         
         # Add the video feed route to the network controller
-        self.controller.add_route(self.route, video_feed)
+        self.controller.add_route(self.route, video_feed, ignore_url_check=self.ignore_url_check)
