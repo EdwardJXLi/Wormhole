@@ -31,12 +31,15 @@ class Wormhole():
         # Set up welcome screen
         if welcome_screen:
             def hello_world():
-                return f"<h1>Welcome to Wormhole!</h1><p>Wormhole Video Streaming Server Running! Version: {__version__}</p>"
+                return (
+                    "<h1>Welcome to Wormhole!</h1>"
+                    "<h3>If you see this page, Wormhole Video Streaming Server is successfully installed and working!</h3>"
+                    f"<p>Version: {__version__}</p>"
+                )
             self.controller.add_route("/", hello_world, strict_slashes=False)
             
         # Start Server In Another Thread
-        self.wormhole_thread = Thread(target=self.controller.start_server)
-        self.wormhole_thread.daemon = True
+        self.wormhole_thread = Thread(target=self.controller.start_server, daemon=True)
         self.wormhole_thread.start()
         
     def add_streamer(self, streamer: Type[AbstractStreamer], *args, **kwargs):

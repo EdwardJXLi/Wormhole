@@ -62,18 +62,6 @@ class AbstractVideo():
         new_frame = np.zeros((self.height, self.width, 3), np.uint8)
         self.set_frame(new_frame)
         
-    # Set the current frame to a blank frame with a given color
-    def set_blank_frame_color(self, color: tuple):
-        new_frame = np.zeros((self.height, self.width, 3), np.uint8)
-        new_frame[:,:,:] = color
-        self.set_frame(new_frame)
-        
-    # Set the current frame to a blank frame with a given color
-    def set_blank_frame_color_rgb(self, r: int, g: int, b: int):
-        new_frame = np.zeros((self.height, self.width, 3), np.uint8)
-        new_frame[:,:,:] = (r, g, b)
-        self.set_frame(new_frame)
-        
 def render_video(video: AbstractVideo, height: int = 720, width: int = 1280, fps: int = 30):
     frame_controller = FrameController(fps)
     while True:

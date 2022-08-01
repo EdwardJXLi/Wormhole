@@ -1,10 +1,10 @@
 from wormhole.viewer import AbstractViewer
 
+from threading import Thread
 import cv2
 import urllib.request
 import numpy as np
 import traceback
-import threading
 
 # Viewer for the Motion JPEG video protocol
 class MJPEGViewer(AbstractViewer):
@@ -13,8 +13,7 @@ class MJPEGViewer(AbstractViewer):
         self.url = url
         
         # Start the video decoder in another thread
-        self.video_decoder_thread = threading.Thread(target=self.video_decoder)
-        self.video_decoder_thread.daemon = True
+        self.video_decoder_thread = Thread(target=self.video_decoder, daemon=True)
         self.video_decoder_thread.start()
         
         super().__init__(height, width, max_fps=max_fps)

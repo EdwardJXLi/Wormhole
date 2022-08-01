@@ -1,4 +1,18 @@
 import time
+import numpy as np
+
+# Helper functions to render colors
+# Set the current frame to a blank frame with a given color
+def blank_frame_color(height:int, width:int, color: tuple):
+    new_frame = np.zeros((height, width, 3), np.uint8)
+    new_frame[:,:,:] = color
+    return new_frame
+    
+# Set the current frame to a blank frame with a given color
+def blank_frame_color_rgb(height:int, width:int, r: int, g: int, b: int):
+    new_frame = np.zeros((height, width, 3), np.uint8)
+    new_frame[:,:,:] = (r, g, b)
+    return new_frame
 
 # Helper Class to Control Video Frame Rate
 class FrameController():
