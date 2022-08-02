@@ -3,6 +3,7 @@ from gevent import monkey
 monkey.patch_all()
 from typing import Type, Optional
 # from multiprocessing import Process
+import threading
 from threading import Thread
 from flask import request
 from markupsafe import escape
@@ -167,7 +168,7 @@ class Wormhole():
             # Get the streamer class
             streamer, _ = self.supported_protocols[proto]
             # Initialize the streamer
-            self.add_stream(streamer, video, f"/wormhole/stream/{name}/{proto.lower()}", ignore_url_check=True)
+            self.create_stream(streamer, video, f"/wormhole/stream/{name}/{proto.lower()}", ignore_url_check=True)
             
         # Add the streamer to the list of managed streams
         self.managed_streams[name] = (video, protocols)
@@ -192,11 +193,15 @@ class Wormhole():
         name = name.lower()
         raise NotImplementedError()
     
-    def add_stream(self, streamer: Type[AbstractStreamer], *args, **kwargs):
+    def create_stream(self, streamer: Type[AbstractStreamer], *args, **kwargs):
         # Initialize Streamer
         streamer_obj = streamer(self.controller, *args, **kwargs)
         # Add Streamer to Wormhole
         self.routes[streamer_obj.route] = streamer_obj
+        
+    def join(self):
+        # Joins the wormhole thread so that the app does not exit
+        self.wormhole_thread.join()
         
     def generate_debug_html(self):
         output = ""
@@ -206,11 +211,14 @@ class Wormhole():
         for proto, (streamer, viewer) in self.supported_protocols.items():
             output += f"<p>[{proto}] Streamer: {escape(streamer)} | Viewer: {escape(viewer)}<p>"
         output += f"<h3>Enabled Routes:</h3>"
-        for route in self.routes:
-            output += f"<p>{route}</p>"
+        for route, streamer in self.routes.items():
+            output += f"<p>{route} | Streamer: {escape(streamer)}</p>"
         output += f"<h3>Managed Streams:</h3>"
         for name, (video, protocols) in self.managed_streams.items():
-            output += f"<p>{name} | {escape(video)} | {protocols}</p>"
+            output += f"<p>{name} | Video Object: {escape(video)} | Supported Protocols: {protocols}</p>"
+        output += f"<h3>Tunning Threads:</h3>"
+        for thread_id, thread in enumerate(threading.enumerate()):
+            output += f"<p>{thread_id} | {escape(thread)}</p>"
         return output
         
 # Lightweight Wormhole Class for Just Reading Streams
