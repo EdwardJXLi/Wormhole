@@ -1,3 +1,4 @@
+from re import S
 import numpy as np
 import cv2
 from typing import Callable, Any
@@ -63,7 +64,7 @@ class AbstractVideo():
         self.set_frame(new_frame)
         
 def render_video(video: AbstractVideo, height: int = 720, width: int = 1280, fps: int = 30):
-    frame_controller = FrameController(fps)
+    frame_controller = FrameController(fps, print_fps=True)
     while True:
         frame = video.get_frame()
         cv2.imshow('frame', cv2.resize(frame, (width, height)))

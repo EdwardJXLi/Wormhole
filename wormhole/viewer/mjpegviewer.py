@@ -6,10 +6,70 @@ import cv2
 import urllib.request
 import numpy as np
 import traceback
-
-# Viewer for the Motion JPEG video protocol
+    
+# Viewer for the Motion JPEG video protocol    
 class MJPEGViewer(AbstractViewer):
-    def __init__(self, url: str, height: int, width: int, max_fps: int = 30, auto_reconnect: bool = False):
+    def __init__(
+        self, 
+        url: str, 
+        height: int, 
+        width: int, 
+        max_fps: int = 30, 
+        read_buffer_size: int = 1024, 
+        auto_reconnect: bool = True
+    ):
+        # Save basic variables about stream
+        self.url = url
+        self.auto_reconnect = auto_reconnect
+        
+        # Save advanced variables about stream
+        self.read_buffer_size = read_buffer_size
+        
+        # Start the video decoder in another thread
+        self.video_decoder_thread = Thread(target=self.video_decoder, daemon=True)
+        self.video_decoder_thread.start()
+        
+        # Create Object
+        super().__init__(height, width, max_fps=max_fps)
+       
+    # Video Decoder Thread 
+    def video_decoder(self):
+        while True:
+            try:
+                with urllib.request.urlopen(self.url) as stream:
+                    # Read jpeg image from stream
+                    inBytes = bytes()
+                    # TODO: Find a way to make this faster
+                    while True:
+                        inBytes += stream.read(self.read_buffer_size)
+                        a = inBytes.find(b'\xff\xd8')
+                        b = inBytes.find(b'\xff\xd9')
+                        if a != -1 and b != -1:
+                            jpg = inBytes[a:b+2]
+                            inBytes = inBytes[b+2:]
+                            np_image = np.fromstring(jpg, dtype=np.uint8)  # type: ignore
+                            i = cv2.imdecode(np_image, cv2.IMREAD_COLOR)
+                            self.set_frame(i)
+            except Exception as e:
+                if self.auto_reconnect:
+                    print(f"Open Camera Error: {e}")
+                    traceback.print_exc()
+                else:
+                    self.set_blank_frame()
+
+# Alternative implementation of the MJPEGViewer class
+# Technically the CV2 method should be faster (implemented in C) and cleaner (nicer api),
+# But it has a critical flaw in that it blocks all other threads from running while decoding the stream.
+# Going to swap to this method once that issue is fixed
+class CV2MJPEGViewer(AbstractViewer):
+    def __init__(
+        self, 
+        url: str, 
+        height: int, 
+        width: int, 
+        max_fps: int = 30, 
+        auto_reconnect: bool = True
+    ):
         # Save basic variables about stream
         self.url = url
         self.auto_reconnect = auto_reconnect
@@ -57,34 +117,3 @@ class MJPEGViewer(AbstractViewer):
             # Set Frame
             self.set_frame(frame)
             self.frame_controller.next_frame()
-        
-# Alternative implementation of the MJPEGViewer class
-class MJPEGViewerRaw(AbstractViewer):
-    def __init__(self, url: str, height: int, width: int, max_fps: int = 30):
-        # Save basic variables about stream
-        self.url = url
-        
-        # Start the video decoder in another thread
-        self.video_decoder_thread = Thread(target=self.video_decoder, daemon=True)
-        self.video_decoder_thread.start()
-        
-        super().__init__(height, width, max_fps=max_fps)
-        
-    def video_decoder(self):
-        while True:
-            try:
-                with urllib.request.urlopen(self.url) as stream:
-                    inBytes = bytes()
-                    while True:
-                        inBytes += stream.read(1024)
-                        a = inBytes.find(b'\xff\xd8')
-                        b = inBytes.find(b'\xff\xd9')
-                        if a != -1 and b != -1:
-                            jpg = inBytes[a:b+2]
-                            inBytes = inBytes[b+2:]
-                            i = cv2.imdecode(np.fromstring(jpg, dtype=np.uint8), cv2.IMREAD_COLOR)  # type: ignore
-                            print(type(i))
-                            self.set_frame(i)
-            except Exception as e:
-                print(f"Open Camera Error: {e}")
-                traceback.print_exc()
