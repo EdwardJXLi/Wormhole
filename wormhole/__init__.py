@@ -220,7 +220,7 @@ class Wormhole():
     # --- Managed Wormhole Viewing ---
     #
 
-    def view(self, ip: str, name: str = "default"):
+    def view(self, hostname: str, name: str = "default"):
         # Check if advanced features are enabled
         if not self.advanced_features:
             raise Exception("Managed Streams Are Only Enabled If Advanced Features Are Enabled!")
@@ -230,15 +230,20 @@ class Wormhole():
         if not name.isalnum():
             raise Exception("Name Must Be Alphanumeric!")
         
-        # TODO: Verify ip address
+        # Verify hostname is valid
+        if not hostname.startswith("http://") and not hostname.startswith("https://"):
+            hostname = f"http://{hostname}"
+        if hostname.endswith("/"):
+            hostname = hostname[:-1]
+        # TODO: use regex to validate hostname, but idk regex
         
         # Sync with the server for information
-        server_streams = self.sync_wormhole(ip)
+        server_streams = self.sync_wormhole(hostname)
         if name not in server_streams:
             raise Exception(f"Requested Stream {name} not being streamed by the server! The current streams are: {server_streams}")
         
         # Sync Stream Information
-        stream_protocols, stream_width, stream_height, stream_fps = self.sync_stream(ip, name)
+        stream_protocols, stream_width, stream_height, stream_fps = self.sync_stream(hostname, name)
         
         # Find best protocol to use for stream
         for proto in stream_protocols:
@@ -252,12 +257,12 @@ class Wormhole():
         _, viewer = self.supported_protocols[best_protocol]
         
         # Initialize the viewer
-        return viewer(f"{ip}/wormhole/stream/{name}/{best_protocol.lower()}", stream_width, stream_height, stream_fps)
+        return viewer(f"{hostname}/wormhole/stream/{name}/{best_protocol.lower()}", stream_width, stream_height, stream_fps)
     
-    def sync_wormhole(self, ip: str):
+    def sync_wormhole(self, hostname: str):
         # Sync information with wormhole server
         resp = requests.post(
-            url=f"{ip}/wormhole/sync",
+            url=f"{hostname}/wormhole/sync",
             json={
                 "version": __version__,
                 "supported_protocols": list(self.supported_protocols.keys())
@@ -297,10 +302,10 @@ class Wormhole():
         # Return with server information
         return resp_json.get("managed_streams", [])
     
-    def sync_stream(self, ip: str, name: str):
+    def sync_stream(self, hostname: str, name: str):
         # Sync information with wormhole server
         resp = requests.get(
-            url=f"{ip}/wormhole/stream/{name}/sync"
+            url=f"{hostname}/wormhole/stream/{name}/sync"
         )
         
         if resp.status_code != 200:
