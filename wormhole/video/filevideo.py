@@ -2,9 +2,8 @@ from wormhole.video import AbstractVideo
 from wormhole.utils import FrameController
 
 import cv2
-from time import sleep
 from threading import Thread
-from typing import Optional
+from typing import Optional, Any
 
 # Creates a video object from a video file
 class FileVideo(AbstractVideo):
@@ -14,6 +13,7 @@ class FileVideo(AbstractVideo):
             height: Optional[int] = None, 
             width: Optional[int] = None,
             repeat: bool = True,
+            cv2_config: Optional[list[tuple[Any, Any]]] = None,
         ):
         # Basic Video Properties
         self.filename: str = filename        
@@ -22,6 +22,10 @@ class FileVideo(AbstractVideo):
         
         # Open Video File
         self.cap = cv2.VideoCapture(self.filename)
+        # Set CV2 Settings
+        if cv2_config:
+            for key, value in cv2_config:
+                self.cap.set(key, value)
         # Set height and width
         height = height or int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         width = width or int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))

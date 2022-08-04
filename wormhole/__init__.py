@@ -1,8 +1,13 @@
 __version__ = "development"
-from gevent import monkey
-monkey.patch_all()
+
+# Setup Gevent Monkey Patching
+try:
+    from gevent import monkey
+    monkey.patch_all()
+except ModuleNotFoundError:
+    print("Gevent is not installed. Ignoring Monkey Patch.")
+    
 from typing import Type, Optional
-# from multiprocessing import Process
 import threading
 from threading import Thread
 from flask import request
@@ -100,7 +105,7 @@ class Wormhole():
             }
             
             return server_response, 200
-        self.controller.add_route("/wormhole/sync", client_sync, methods=["POST"], strict_slashes=False, ignore_url_check=True)
+        self.controller.add_route("/wormhole/sync", client_sync, methods=["POST"], strict_slashes=False, strict_url=False)
         
         # Set Up Stream Sync
         def stream_sync(name):
@@ -123,7 +128,7 @@ class Wormhole():
             }
             
             return server_response, 200
-        self.controller.add_route("/wormhole/stream/<name>/sync", stream_sync, methods=["GET", "POST"], strict_slashes=False, ignore_url_check=True)
+        self.controller.add_route("/wormhole/stream/<name>/sync", stream_sync, methods=["GET", "POST"], strict_slashes=False, strict_url=False)
         
     # Simple Aliases For The Different Video Types
     def stream(self, resource: str, *args, **kwargs):
@@ -168,7 +173,7 @@ class Wormhole():
             # Get the streamer class
             streamer, _ = self.supported_protocols[proto]
             # Initialize the streamer
-            self.create_stream(streamer, video, f"/wormhole/stream/{name}/{proto.lower()}", ignore_url_check=True)
+            self.create_stream(streamer, video, f"/wormhole/stream/{name}/{proto.lower()}", strict_url=False)
             
         # Add the streamer to the list of managed streams
         self.managed_streams[name] = (video, protocols)
