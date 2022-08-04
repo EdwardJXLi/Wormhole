@@ -7,7 +7,12 @@ from wormhole.utils import FrameController
 
 # General Abstract Video Class for Wormhole. Has some advanced features that are helpful for video processing
 class AbstractVideo():
-    def __init__(self, height: int, width: int, max_fps: int = 30):
+    def __init__(
+        self, 
+        height: int, 
+        width: int, 
+        max_fps: int = 30
+    ):
         # Basic Video Properties
         self.height: int = height
         self.width: int = width
@@ -63,8 +68,14 @@ class AbstractVideo():
         new_frame = np.zeros((self.height, self.width, 3), np.uint8)
         self.set_frame(new_frame)
         
-def render_video(video: AbstractVideo, height: int = 720, width: int = 1280, fps: int = 30):
-    frame_controller = FrameController(fps, print_fps=True)
+def render_video(
+    video: AbstractVideo, 
+    height: int = 720, 
+    width: int = 1280, 
+    fps: int = 30,
+    print_fps: bool = False
+):
+    frame_controller = FrameController(fps, print_fps=print_fps)
     while True:
         frame = video.get_frame()
         cv2.imshow('frame', cv2.resize(frame, (width, height)))
