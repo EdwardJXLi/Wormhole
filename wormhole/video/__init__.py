@@ -18,8 +18,8 @@ class AbstractVideo():
         self.width: int = width
         self.max_fps: int = max_fps
         # Sanity Check
-        if 0 in (self.height, self.width, self.max_fps):
-            raise ValueError("Video Properties cannot be 0!")
+        if 0 > self.height or 0 > self.width or 0 > self.max_fps:
+            raise ValueError("Video Properties cannot smaller than 0!")
         # Video Information
         self._frame: np.ndarray = np.zeros((height, width, 3), np.uint8)
         self.finished_frame: np.ndarray = self._frame

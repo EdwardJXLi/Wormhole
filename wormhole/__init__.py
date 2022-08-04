@@ -12,6 +12,7 @@ import threading
 from threading import Thread
 from flask import request
 from markupsafe import escape
+import requests
 
 from wormhole.video import AbstractVideo
 from wormhole.controller import AbstractController, FlaskController
@@ -20,6 +21,11 @@ from wormhole.viewer import AbstractViewer
 
 # Entrypoint for everything WORMHOLE!
 class Wormhole():
+    
+    #
+    # --- Basic Wormhole Setup ---
+    #
+    
     def __init__(
         self, 
         # Basic Controller Settings
@@ -60,6 +66,8 @@ class Wormhole():
             "MJPEG": (MJPEGStreamer, MJPEGViewer),
         }
         if self.advanced_features:
+            if len(self.supported_protocols) == 0:
+                raise Exception("No supported protocols were passed!")
             self.set_up_advanced_features()
         
         # Set up welcome screen
@@ -76,35 +84,60 @@ class Wormhole():
         # Start Server In Another Thread
         self.wormhole_thread = Thread(target=self.controller.start_server, daemon=True)
         self.wormhole_thread.start()
+    
+    #
+    # --- Advanced Wormhole Setup ---
+    #
         
     def set_up_advanced_features(self):
         # Set up basic client sync
         def client_sync():
-            # Get client information
-            client = request.json
-            if not client:
-                return "Invalid Json!", 400
-            if "version" not in client or "supported_protocols" not in client:
-                return "Json Missing Fields!", 400
-            
-            # Check if versions match
-            client_version = client.get("version", "N/A")
-            if client_version != __version__:
-                return f"Wormhole Version Mismatch! Server: {__version__} Client: {client_version}", 400
-            
-            # Get client supported protocols
-            # Not really useful for now, but we will parse it anyways
-            client_supported_protocols = client.get("supported_protocols", [])
-            
-            # Return with server information
+            # Default Response
             server_response = {
                 "version": __version__,
-                "ready": True,
                 "supported_protocols": list(self.supported_protocols.keys()),
                 "managed_streams": list(self.managed_streams.keys()),
             }
             
-            return server_response, 200
+            # Get client information
+            if not request.json:
+                return {
+                    "ready": False,
+                    "message": "Invalid Client Information Sent!",
+                    **server_response
+                }, 400
+            if not all(key in request.json for key in ["version", "supported_protocols"]):
+                return {
+                    "ready": False,
+                    "message": "Posted Json Is Missing Fields!",
+                    **server_response
+                }, 400
+            
+            # Check if versions match
+            client_version = request.json.get("version", "N/A")
+            if client_version != __version__:
+                return {
+                    "ready": False,
+                    "message": f"Wormhole Version Mismatch! Server: {__version__} Client: {client_version}",
+                    **server_response
+                }, 400
+            
+            # Get client supported protocols & verify if they are supported
+            client_supported_protocols = request.json.get("supported_protocols", [])
+            if not any([p in client_supported_protocols for p in self.supported_protocols.keys()]):
+                return {
+                    "ready": False,
+                    "message": f"Client Does Not Support Any of The Supported Protocols! Server Supports: {list(self.supported_protocols.keys())} Client Supports: {client_supported_protocols}",
+                    **server_response
+                }, 400
+            
+            # Return with server information
+            return {
+                "ready": True,
+                "message": f"Wormhole Is Ready To Connect!",
+                **server_response
+            }, 200
+        
         self.controller.add_route("/wormhole/sync", client_sync, methods=["POST"], strict_slashes=False, strict_url=False)
         
         # Set Up Stream Sync
@@ -118,7 +151,7 @@ class Wormhole():
             # Return with server information
             server_response = {
                 "version": __version__,
-                "camera_name": name,
+                "stream_name": name,
                 "supported_protocols": supported_protocols,
                 "stream_info": {
                     "width": video_obj.width,
@@ -129,6 +162,10 @@ class Wormhole():
             
             return server_response, 200
         self.controller.add_route("/wormhole/stream/<name>/sync", stream_sync, methods=["GET", "POST"], strict_slashes=False, strict_url=False)
+    
+    #
+    # --- Managed Wormhole Streaming ---
+    #
         
     # Simple Aliases For The Different Video Types
     def stream(self, resource: str, *args, **kwargs):
@@ -179,6 +216,123 @@ class Wormhole():
         self.managed_streams[name] = (video, protocols)
         return video
     
+    #
+    # --- Managed Wormhole Viewing ---
+    #
+
+    def view(self, ip: str, name: str = "default"):
+        # Check if advanced features are enabled
+        if not self.advanced_features:
+            raise Exception("Managed Streams Are Only Enabled If Advanced Features Are Enabled!")
+        
+        # Process Name
+        name = name.lower()
+        if not name.isalnum():
+            raise Exception("Name Must Be Alphanumeric!")
+        
+        # TODO: Verify ip address
+        
+        # Sync with the server for information
+        server_streams = self.sync_wormhole(ip)
+        if name not in server_streams:
+            raise Exception(f"Requested Stream {name} not being streamed by the server! The current streams are: {server_streams}")
+        
+        # Sync Stream Information
+        stream_protocols, stream_width, stream_height, stream_fps = self.sync_stream(ip, name)
+        
+        # Find best protocol to use for stream
+        for proto in stream_protocols:
+            if proto in self.supported_protocols.keys():
+                best_protocol = proto
+                break
+        else:
+            raise Exception(f"No Supported Protocols Found For Stream {name}! This error occurred after sync, which should never happen!")
+        
+        # Get the viewer class
+        _, viewer = self.supported_protocols[best_protocol]
+        
+        # Initialize the viewer
+        return viewer(f"{ip}/wormhole/stream/{name}/{best_protocol.lower()}", stream_width, stream_height, stream_fps)
+    
+    def sync_wormhole(self, ip: str):
+        # Sync information with wormhole server
+        resp = requests.post(
+            url=f"{ip}/wormhole/sync",
+            json={
+                "version": __version__,
+                "supported_protocols": list(self.supported_protocols.keys())
+            }
+        )
+        
+        if resp.status_code != 200 and resp.status_code != 400:
+            raise Exception(f"Failed To Sync With Wormhole Server! Error: [{resp.status_code}] {resp.text}")
+        
+        # Get the response
+        resp_json = resp.json()
+        if not resp_json:
+            raise Exception("Failed To Sync With Wormhole Server! Invalid Json Response!")
+        
+        # Verify that all json fields are present
+        # Yes, match exists, BUT this program is supposed to support python3.6 onwards
+        if not all(key in resp_json for key in ["ready", "message", "version", "supported_protocols", "managed_streams"]):
+            raise Exception("Failed To Sync With Wormhole Server! Missing Json Fields!")
+        
+        # Check if errored!
+        if resp.status_code == 400:
+            raise Exception(f"Failed To Sync With Wormhole Server! {resp_json.get('message', False)}")
+        
+        # NOTE: These should be checked by the server already, but just to double check, run again!
+        # Check if server is ready
+        if not resp_json.get("ready", False):
+            raise Exception(f"Failed To Sync With Wormhole Server! Unknown Error: {resp_json}")
+        
+        # Check if version matches
+        if resp_json.get("version", "N/A") != __version__:
+            raise Exception(f"Failed To Sync With Wormhole Server! Version Mismatch! Server: {__version__} Client: {resp_json.get('version', 'N/A')}")
+        
+        # Check if server supports all protocols
+        if not any([p in resp_json.get("supported_protocols", []) for p in self.supported_protocols.keys()]):
+            raise Exception(f"Failed To Sync With Wormhole Server! Server Does Not Have Any Supported Protocols!")
+        
+        # Return with server information
+        return resp_json.get("managed_streams", [])
+    
+    def sync_stream(self, ip: str, name: str):
+        # Sync information with wormhole server
+        resp = requests.get(
+            url=f"{ip}/wormhole/stream/{name}/sync"
+        )
+        
+        if resp.status_code != 200:
+            raise Exception(f"Failed To Sync With Wormhole Stream! Error: [{resp.status_code}] {resp.text}")
+        
+        # Get the response
+        resp_json = resp.json()
+        if not resp_json:
+            raise Exception("Failed To Sync With Wormhole Stream! Invalid Json Response!")
+        
+        # Verify that all json fields are present
+        # Yes, match exists, BUT this program is supposed to support python3.6 onwards
+        if not all(key in resp_json for key in ["version", "stream_name", "supported_protocols", "stream_info"]):
+            raise Exception("Failed To Sync With Wormhole Stream! Missing Json Fields!")
+        
+        # Verify Stream Response
+        stream_info = resp_json.get("stream_info")
+        if not all(key in stream_info for key in ["width", "height", "max_fps"]):
+            raise Exception("Failed To Sync With Wormhole Stream! Stream Info is Missing Json Fields!")
+        
+        return resp_json.get("supported_protocols"), stream_info.get("width", 0), stream_info.get("height", 0), stream_info.get("max_fps", 0)
+    
+    #
+    # --- Helper Streaming Functions ---
+    #
+    
+    def create_stream(self, streamer: Type[AbstractStreamer], *args, **kwargs):
+        # Initialize Streamer
+        streamer_obj = streamer(self.controller, *args, **kwargs)
+        # Add Streamer to Wormhole
+        self.routes[streamer_obj.route] = streamer_obj
+    
     def get_video(self, name: str = "default"):
         # Check if advanced features are enabled
         if not self.advanced_features:
@@ -189,20 +343,6 @@ class Wormhole():
             raise Exception(f"Stream {name} Was Not Found!")
         
         return self.managed_streams[name][0]
-
-    def view(self, name: str = "default", protocols: Optional[list[int]] = None):
-        # Check if advanced features are enabled
-        if not self.advanced_features:
-            raise Exception("Managed Streams Are Only Enabled If Advanced Features Are Enabled!")
-        
-        name = name.lower()
-        raise NotImplementedError()
-    
-    def create_stream(self, streamer: Type[AbstractStreamer], *args, **kwargs):
-        # Initialize Streamer
-        streamer_obj = streamer(self.controller, *args, **kwargs)
-        # Add Streamer to Wormhole
-        self.routes[streamer_obj.route] = streamer_obj
         
     def join(self):
         # Joins the wormhole thread so that the app does not exit
