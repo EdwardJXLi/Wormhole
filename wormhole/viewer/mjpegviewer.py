@@ -36,7 +36,7 @@ class MJPEGViewer(AbstractViewer):
         self.frame_controller = FrameController(self.max_fps)
         
         # Start Video Thread
-        self.video_decoder_thread = Thread(target=self.video_decoder, daemon = True)
+        self.video_decoder_thread = Thread(target=self.video_decoder, daemon=True)
         self.video_decoder_thread.start()
         
     def video_decoder(self):

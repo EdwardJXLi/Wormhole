@@ -2,6 +2,7 @@ opencv-python
 flask
 flask_socketio
 flask_cors
+websocket-client
 gevent
 gevent-websocket
 requests

@@ -10,6 +10,9 @@ class AbstractController():
     def __init__(self, *args, **kwargs):
         raise NotImplementedError()
     
+    def get_app(self):
+        raise NotImplementedError()
+    
     def add_route(self, route: str, handler: Callable, *args, **kwargs):
         raise NotImplementedError()
     
@@ -61,6 +64,9 @@ class FlaskController(AbstractController):
             
         # Monkey Patch _is_setup_finished so that dynamic route additions are allowed
         self.app._is_setup_finished = lambda: False
+        
+    def get_app(self):
+        return self.app
             
     def add_route(self, route: str, handler: Callable, *args, strict_url: bool = True, **kwargs):
         # Validate Route

@@ -40,7 +40,7 @@ class FileVideo(AbstractVideo):
         self.frame_controller = FrameController(self.max_fps)
         
         # Start Video Thread
-        self.video_thread = Thread(target=self.video_loop, daemon = True)
+        self.video_thread = Thread(target=self.video_loop, daemon=True)
         self.video_thread.start()
         
     def video_loop(self):

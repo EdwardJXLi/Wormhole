@@ -18,6 +18,7 @@ class MJPEGStreamer(AbstractStreamer):
         super().__init__(*args, **kwargs)
         self.boundary = boundary
         self.max_fps = fps_override or self.video.max_fps
+        self.imencode_config = imencode_config
 
         # Create Video Feed Handler for Flask
         def video_feed():
@@ -28,7 +29,7 @@ class MJPEGStreamer(AbstractStreamer):
                     _, jpg = cv2.imencode(
                         ".jpg", 
                         self.video.get_frame(),
-                        imencode_config or []  # Use Empty Config if imencode is not available
+                        self.imencode_config or []  # Use Empty Config if imencode is not available
                     )
                     yield (b"--" + boundary.encode("ascii") + b"\r\nContent-Type: image/jpeg\r\n\r\n" + jpg.tobytes() + b"\r\n")
                     frame_controller.next_frame()
