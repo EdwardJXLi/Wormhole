@@ -16,7 +16,7 @@ def blank_frame_color_rgb(height:int, width:int, r: int, g: int, b: int):
 
 # Helper Class to Control Video Frame Rate
 class FrameController():
-    def __init__(self, fps: int, print_fps: bool = False):
+    def __init__(self, fps: int, print_fps: bool = False, sleep_func = None):
         # Core Functionality
         self.target_fps: int = fps
         self.last_frame: float = time.time()
@@ -25,6 +25,9 @@ class FrameController():
         self.start_time = time.time()
         self.frames_rendered = 0
         self.actual_fps = 0
+        # Sleep Function is used for if a specific non-blocking sleep function is needed.
+        # Gevent Patches already do this, so its not that necessary, but keeping it here for compatibility.
+        self.sleep_func = sleep_func or time.sleep
     
     def get_sleep_time(self):
         cur_time = time.time()
@@ -33,7 +36,7 @@ class FrameController():
     
     def next_frame(self):
         # Ensure FPS
-        time.sleep(self.get_sleep_time())
+        self.sleep_func(self.get_sleep_time())
         self.last_frame = time.time()
         # Calculate FPS
         self.frames_rendered += 1
