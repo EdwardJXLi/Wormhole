@@ -73,12 +73,13 @@ def render_video(
     height: int = 720, 
     width: int = 1280, 
     max_fps: int = 30,
-    print_fps: bool = False
+    print_fps: bool = False,
+    window_name = "Video Preview"
 ):
     frame_controller = FrameController(max_fps, print_fps=print_fps)
     while True:
         frame = video.get_frame()
-        cv2.imshow('frame', cv2.resize(frame, (width, height)))
+        cv2.imshow(window_name, cv2.resize(frame, (width, height)))
         if cv2.waitKey(1) == ord('q'):
             break
         frame_controller.next_frame()
