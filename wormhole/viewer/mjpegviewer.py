@@ -27,6 +27,7 @@ class MJPEGViewer(AbstractViewer):
         # height = height or int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         # width = width or int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         
+        # Initiate Video Parent
         super().__init__(height, width, max_fps=max_fps)
         
         # Check if Video File Opened

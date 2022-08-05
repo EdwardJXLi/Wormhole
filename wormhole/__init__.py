@@ -59,10 +59,13 @@ class Wormhole():
             
         # Set up advanced Wormhole features
         self.advanced_features = advanced_features
+        from wormhole.streamer.rawstreamer import RawJPEGStreamer
+        from wormhole.viewer.rawviewer import RawJPEGViewer
         from wormhole.streamer.mjpegstreamer import MJPEGStreamer
         from wormhole.viewer.mjpegviewer import MJPEGViewer
         self.supported_protocols = supported_protocols or {  
             # ORDER MATTERS HERE! Ranked in order from most preferred to least preferred!
+            "RAWJPEG": (RawJPEGStreamer, RawJPEGViewer),
             "MJPEG": (MJPEGStreamer, MJPEGViewer),
         }
         if self.advanced_features:
@@ -245,6 +248,7 @@ class Wormhole():
         # Sync Stream Information
         stream_protocols, stream_width, stream_height, stream_fps = self.sync_stream(hostname, name)
         
+        print(stream_protocols)
         # Find best protocol to use for stream
         for proto in stream_protocols:
             if proto in self.supported_protocols.keys():
@@ -252,6 +256,8 @@ class Wormhole():
                 break
         else:
             raise Exception(f"No Supported Protocols Found For Stream {name}! This error occurred after sync, which should never happen!")
+        
+        print(best_protocol)
         
         # Get the viewer class
         _, viewer = self.supported_protocols[best_protocol]

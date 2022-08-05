@@ -72,10 +72,10 @@ def render_video(
     video: AbstractVideo, 
     height: int = 720, 
     width: int = 1280, 
-    fps: int = 30,
+    max_fps: int = 30,
     print_fps: bool = False
 ):
-    frame_controller = FrameController(fps, print_fps=print_fps)
+    frame_controller = FrameController(max_fps, print_fps=print_fps)
     while True:
         frame = video.get_frame()
         cv2.imshow('frame', cv2.resize(frame, (width, height)))

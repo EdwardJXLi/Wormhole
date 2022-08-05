@@ -43,7 +43,7 @@ class RawStreamerBase(AbstractStreamer):
                         self.video.get_frame(),
                         self.imencode_config or []  # Use Empty Config if imencode is not available
                     )
-                    emit("video_feed", jpg.tobytes(), room="video_feed", namespace=self.route, broadcast=True)
+                    emit("video_frame", jpg.tobytes(), room="video_feed", namespace=self.route, broadcast=True)
                     frame_controller.next_frame()
 
         # Setup Background Video Thread
@@ -70,6 +70,8 @@ class RawStreamerBase(AbstractStreamer):
             if self.connected_clients == 0:
                 self.thread_running = False
         self.controller.add_message_handler("disconnect", on_disconnect, namespace=self.route, strict_url=self.strict_url)
+
+# Below are the different image encoding types the system supports
 
 # Raw JPEG Streamer
 class RawJPEGStreamer(RawStreamerBase):
