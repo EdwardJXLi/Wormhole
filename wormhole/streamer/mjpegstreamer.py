@@ -1,17 +1,21 @@
 from wormhole.streamer import AbstractStreamer
 from wormhole.utils import FrameController
 
+import cv2
 from flask.wrappers import Response
 from typing import Optional, Any
-import cv2
 
-# Streamer for the Motion JPEG video protocol
+
 class MJPEGStreamer(AbstractStreamer):
+    """
+    Streamer for the Motion JPEG video protocol
+    """
+
     def __init__(
-        self, 
-        *args, 
-        boundary: str = "WORMHOLE", 
-        fps_override: Optional[int] = None, 
+        self,
+        *args,
+        boundary: str = "WORMHOLE",
+        fps_override: Optional[int] = None,
         print_fps: bool = False,
         imencode_config: Optional[list[Any]] = None,
         **kwargs
@@ -29,7 +33,7 @@ class MJPEGStreamer(AbstractStreamer):
                 frame_controller = FrameController(self.max_fps, print_fps=self.print_fps)
                 while True:
                     _, jpg = cv2.imencode(
-                        ".jpg", 
+                        ".jpg",
                         self.video.get_frame(),
                         self.imencode_config or []  # Use Empty Config if imencode is not available
                     )
@@ -40,6 +44,6 @@ class MJPEGStreamer(AbstractStreamer):
                 generate_next_frame(),
                 mimetype=f"multipart/x-mixed-replace; boundary={boundary}",
             )
-        
+
         # Add the video feed route to the network controller
         self.controller.add_route(self.route, video_feed, strict_url=self.strict_url)

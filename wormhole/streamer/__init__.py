@@ -1,13 +1,17 @@
-from wormhole.video import AbstractVideo
 from wormhole.controller import AbstractController
+from wormhole.video import AbstractVideo
 
-# General Abstract Streamer Class for Wormhole. 
+
 class AbstractStreamer():
+    """
+    General Abstract Streamer Class for Wormhole.
+    """
+
     def __init__(
-        self, 
-        controller: AbstractController, 
-        video: AbstractVideo, 
-        route: str, 
+        self,
+        controller: AbstractController,
+        video: AbstractVideo,
+        route: str,
         strict_url: bool = True
     ):
         self.controller = controller

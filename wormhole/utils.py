@@ -1,23 +1,41 @@
-import time
 import math
 import numpy as np
+import time
 
-# Helper functions to render colors
-# Set the current frame to a blank frame with a given color
-def blank_frame_color(height:int, width:int, color: tuple):
+#
+# --- Helper functions to render colors ---
+#
+
+
+def blank_frame_color(height: int, width: int, color: tuple):
+    """
+    Set the current frame to a blank frame with a given color
+    """
     new_frame = np.zeros((height, width, 3), np.uint8)
-    new_frame[:,:,:] = color
-    return new_frame
-    
-# Set the current frame to a blank frame with a given color
-def blank_frame_color_rgb(height:int, width:int, r: int, g: int, b: int):
-    new_frame = np.zeros((height, width, 3), np.uint8)
-    new_frame[:,:,:] = (r, g, b)
+    new_frame[:, :, :] = color
     return new_frame
 
-# Helper Class to Control Video Frame Rate
+
+def blank_frame_color_rgb(height: int, width: int, r: int, g: int, b: int):
+    """
+    Set the current frame to a blank frame with a given color
+    """
+    new_frame = np.zeros((height, width, 3), np.uint8)
+    new_frame[:, :, :] = (r, g, b)
+    return new_frame
+
+
+#
+# --- Helper Classes ---
+#
+
+
 class FrameController():
-    def __init__(self, fps: int, print_fps: bool = False, sleep_func = None, fps_window_delta: float = 5.0):
+    """
+    Helper Class to Control Video Frame Rate
+    """
+
+    def __init__(self, fps: int, print_fps: bool = False, sleep_func=None, fps_window_delta: float = 5.0):
         # Core Functionality
         self.target_fps: int = fps
         self.last_frame: float = time.time()
@@ -38,12 +56,12 @@ class FrameController():
         # Sleep Function is used for if a specific non-blocking sleep function is needed.
         # Gevent Patches already do this, so its not that necessary, but keeping it here for compatibility.
         self.sleep_func = sleep_func or time.sleep
-    
+
     def get_sleep_time(self):
         cur_time = time.time()
         self.frame_time = cur_time - self.last_frame
         return max((1. / self.target_fps) - self.frame_time, 0.0)
-    
+
     def next_frame(self):
         # Ensure FPS
         self.sleep_func(self.get_sleep_time())
@@ -62,8 +80,8 @@ class FrameController():
         # Print FPS
         if self.print_fps:
             print("Instantaneous FPS: {0:.2f} Average FPS: {1:.2f} Windowed FPS: {2:.2f} Frame Time {3:.2f} ms".format(
-                instantaneous_fps, self.average_fps, self.fps_window, self.frame_time*1000
+                instantaneous_fps, self.average_fps, self.fps_window, self.frame_time * 1000
             ))
-            
+
     def reset_fps_stats(self):
         self.__init__(self.target_fps, self.print_fps)

@@ -1,15 +1,19 @@
-import numpy as np
 import cv2
-from typing import Callable, Optional
+import numpy as np
 import traceback
+from typing import Callable, Optional
 from wormhole.utils import FrameController
 
-# General Abstract Video Class for Wormhole. Has some advanced features that are helpful for video processing
+
 class AbstractVideo():
+    """
+    General Abstract Video Class for Wormhole. Has some advanced features that are helpful for video processing
+    """
+
     def __init__(
-        self, 
-        height: int, 
-        width: int, 
+        self,
+        height: int,
+        width: int,
         max_fps: int = 30
     ):
         # Basic Video Properties
@@ -26,15 +30,15 @@ class AbstractVideo():
         self.frame_modifiers: list[Callable[[AbstractVideo], None]] = []
         # Frame Subscribers -> List of functions to call when a new frame arrives
         self.frame_subscribers: list[Callable[[AbstractVideo], None]] = []
-        
+
     # Add a function to the frame modifiers
     def add_frame_modifier(self, modifier):
         self.frame_modifiers.append(modifier)
-        
+
     # Add a function to the frame subscribers
     def add_frame_subscriber(self, subscriber):
         self.frame_subscribers.append(subscriber)
-        
+
     # Call all frame modifiers
     def call_frame_modifiers(self):
         for modifier in self.frame_modifiers:
@@ -42,7 +46,7 @@ class AbstractVideo():
                 modifier(self)
             except Exception as e:
                 traceback.print_exc()
-            
+
     # Call all frame subscribers
     def call_frame_subscribers(self):
         for subscriber in self.frame_subscribers:
@@ -50,30 +54,31 @@ class AbstractVideo():
                 subscriber(self)
             except Exception as e:
                 traceback.print_exc()
-            
+
     # Get the current frame
     def get_frame(self):
         return self.finished_frame
-        
+
     # Set the current frame
     def set_frame(self, frame: np.ndarray):
         self._frame = frame
         self.call_frame_modifiers()
         self.finished_frame = self._frame
         self.call_frame_subscribers()
-        
+
     # Set the current frame to a blank frame
     def set_blank_frame(self):
         new_frame = np.zeros((self.height, self.width, 3), np.uint8)
         self.set_frame(new_frame)
-        
+
+
 def render_video(
-    video: AbstractVideo, 
-    height: Optional[int] = None, 
+    video: AbstractVideo,
+    height: Optional[int] = None,
     width: Optional[int] = None,
     max_fps: Optional[int] = None,
     print_fps: bool = False,
-    window_name = "Video Preview"
+    window_name="Video Preview"
 ):
     height = height or video.height
     width = width or video.width
@@ -86,8 +91,14 @@ def render_video(
             break
         frame_controller.next_frame()
     cv2.destroyAllWindows()
-    
+
 # Create an alias for AbstractVideo for a more coherent API
+
+
 class CustomVideo(AbstractVideo):
+    """
+    Create Custom Video Streams
+    """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

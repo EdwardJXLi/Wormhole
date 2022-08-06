@@ -1,9 +1,12 @@
 from wormhole.video import AbstractVideo
 
-# Creates a video object from a camera
+
 class CameraVideo(AbstractVideo):
+    """
+    Creates a video object from a camera
+    """
     def __init__(
-            *args, 
-            **kwargs
-        ):
+        *args,
+        **kwargs
+    ):
         raise NotImplementedError()
