@@ -1,4 +1,4 @@
-from wormhole.viewer.socketioviewer import SocketIOViewerBase
+from wormhole.viewer import SocketIOViewerBase
 
 import cv2
 import numpy as np

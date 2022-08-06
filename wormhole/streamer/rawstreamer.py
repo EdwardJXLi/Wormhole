@@ -1,4 +1,4 @@
-from wormhole.streamer.socketiostreamer import SocketIOStreamerBase
+from wormhole.streamer import SocketIOStreamerBase
 
 import cv2
 from typing import Optional, Any
