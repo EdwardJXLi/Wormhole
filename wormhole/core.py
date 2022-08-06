@@ -292,7 +292,7 @@ class Wormhole():
         _, viewer = self.supported_protocols[best_protocol]
 
         # Initialize the viewer
-        return viewer(f"{hostname}/wormhole/stream/{name}/{best_protocol.lower()}", stream_width, stream_height, stream_fps)
+        return viewer(f"{hostname}/wormhole/stream/{name}/{best_protocol.lower()}", stream_height, stream_width, stream_fps)
 
     def sync_wormhole(self, hostname: str):
         # Sync information with wormhole server

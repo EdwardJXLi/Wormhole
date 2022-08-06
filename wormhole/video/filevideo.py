@@ -32,7 +32,7 @@ class FileVideo(AbstractVideo):
             for key, value in cv2_config:
                 self.cap.set(key, value)
         # Set height, width, or fps if they are not set by default
-        max_fps = max_fps or int(self.cap.get(cv2.CV_CAP_PROP_FPS))
+        max_fps = max_fps or int(self.cap.get(cv2.CAP_PROP_FPS))
         height = height or int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         width = width or int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 
