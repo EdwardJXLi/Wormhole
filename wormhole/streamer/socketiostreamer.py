@@ -14,13 +14,13 @@ class SocketIOStreamerBase(AbstractStreamer):
 
     def __init__(
         self,
-        stream_publisher: Callable,
+        frame_publisher_hotloop: Callable,
         *args,
         **kwargs
     ):
         super().__init__(*args, **kwargs)
         # Main loop to run for video streams
-        self.stream_publisher = stream_publisher
+        self.frame_publisher_hotloop = frame_publisher_hotloop
 
         # Control variables to save on execution when no clients are connected
         self.thread_running = False
@@ -62,7 +62,7 @@ class SocketIOStreamerBase(AbstractStreamer):
 
                 # Run Stream Publisher Function
                 # This should process any video encoding work and publishing logic
-                self.stream_publisher()
+                self.frame_publisher_hotloop()
 
                 frame_controller.next_frame()
 
