@@ -59,13 +59,13 @@ class Wormhole():
             
         # Set up advanced Wormhole features
         self.advanced_features = advanced_features
-        # from wormhole.streamer.rawstreamer import RawJPEGStreamer
-        # from wormhole.viewer.rawviewer import RawJPEGViewer
+        from wormhole.streamer.rawstreamer import RawJPEGStreamer
+        from wormhole.viewer.rawviewer import RawJPEGViewer
         from wormhole.streamer.mjpegstreamer import MJPEGStreamer
         from wormhole.viewer.mjpegviewer import MJPEGViewer
         self.supported_protocols = supported_protocols or {  
             # ORDER MATTERS HERE! Ranked in order from most preferred to least preferred!
-            # "RAWJPEG": (RawJPEGStreamer, RawJPEGViewer),
+            "RAWJPEG": (RawJPEGStreamer, RawJPEGViewer),
             "MJPEG": (MJPEGStreamer, MJPEGViewer),
         }
         if self.advanced_features:
