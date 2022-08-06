@@ -71,12 +71,13 @@ class RawPNGStreamer(RawIMEncodeStreamerBase):
         super().__init__(".png", *args, **kwargs)
 
 
-# Raw WEBP Streaming
-# Sends raw individual WEBP frames over the network
-class RawWEBPStreamer(RawIMEncodeStreamerBase):
+# Raw Image File Streaming
+# Sends raw individual image file frames over the network
+class RawImageFormatStreamer(RawIMEncodeStreamerBase):
     def __init__(
         self, 
+        image_format,
         *args,
         **kwargs
     ):
-        super().__init__(".webp", *args, **kwargs)
+        super().__init__(image_format, *args, **kwargs)

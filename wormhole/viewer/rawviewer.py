@@ -68,12 +68,15 @@ class RawPNGViewer(RawIMDecodeViewerBase):
         super().__init__(*args, **kwargs)
 
 
-# Viewer for Raw WEBP Streaming
-class RawWEBPViewer(RawIMDecodeViewerBase):
+# Viewer for Raw Image Format Streaming
+class RawImageFormatViewer(RawIMDecodeViewerBase):
     def __init__(
         self, 
+        image_format,
         *args,
         **kwargs
     ):
+        # Image Format isnt used, but keeping it here for API compatibility.
+        self.image_format = image_format
         # Initiate Parent SocketIO Viewer Object
         super().__init__(*args, **kwargs)
