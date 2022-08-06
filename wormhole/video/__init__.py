@@ -1,7 +1,6 @@
-from re import S
 import numpy as np
 import cv2
-from typing import Callable, Any
+from typing import Callable, Optional
 import traceback
 from wormhole.utils import FrameController
 
@@ -70,12 +69,15 @@ class AbstractVideo():
         
 def render_video(
     video: AbstractVideo, 
-    height: int = 720, 
-    width: int = 1280, 
-    max_fps: int = 30,
+    height: Optional[int] = None, 
+    width: Optional[int] = None,
+    max_fps: Optional[int] = None,
     print_fps: bool = False,
     window_name = "Video Preview"
 ):
+    height = height or video.height
+    width = width or video.width
+    max_fps = max_fps or video.max_fps
     frame_controller = FrameController(max_fps, print_fps=print_fps)
     while True:
         frame = video.get_frame()
@@ -84,3 +86,8 @@ def render_video(
             break
         frame_controller.next_frame()
     cv2.destroyAllWindows()
+    
+# Create an alias for AbstractVideo for a more coherent API
+class CustomVideo(AbstractVideo):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
