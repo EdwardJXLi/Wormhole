@@ -121,7 +121,7 @@ class BufferedMJPEGViewer(AbstractViewer):
                             self.frame_controller.next_frame()
             except Exception as e:
                 if self.auto_reconnect:
-                    print(f"Open Camera Error: {e}")
+                    print(f"Open Stream Error: {e}")
                     traceback.print_exc()
                 else:
                     self.set_blank_frame()
