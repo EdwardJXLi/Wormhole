@@ -1,5 +1,6 @@
 from wormhole.viewer import AbstractViewer
 
+import math
 import socketio
 from typing import Callable
 from urllib.parse import urlparse
@@ -16,7 +17,8 @@ class SocketIOViewerBase(AbstractViewer):
         url: str,
         height: int,
         width: int,
-        max_fps: int = 30,
+        max_fps: float = math.inf,
+        print_fps: bool = False,
         *args,
         **kwargs
     ):
@@ -32,7 +34,7 @@ class SocketIOViewerBase(AbstractViewer):
         self.sio_client = socketio.Client(*args, **kwargs)
 
         # Initiate Video Parent Object
-        super().__init__(height, width, max_fps=max_fps)
+        super().__init__(height, width, max_fps=max_fps, print_fps=print_fps)
 
         # Create SocketIO Handler for when raw images stream in
         # Proxying the function with a lambda so that the self context is also passed in

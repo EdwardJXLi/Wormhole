@@ -13,11 +13,12 @@ class FileVideo(AbstractVideo):
 
     def __init__(
         self, filename: str,
-        max_fps: int = 30,
+        max_fps: float = 30,
         height: Optional[int] = None,
         width: Optional[int] = None,
         repeat: bool = True,
         cv2_config: Optional[list[tuple[Any, Any]]] = None,
+        print_fps: bool = False
     ):
         # Basic Video Properties
         self.filename: str = filename
@@ -41,7 +42,7 @@ class FileVideo(AbstractVideo):
         if not self.cap.isOpened():
             raise ValueError("Video File Not Opened! An Error Probably Occurred.")
         # Set up Frame Controller
-        self.frame_controller = FrameController(self.max_fps)
+        self.frame_controller = FrameController(self.max_fps, print_fps=print_fps)
 
         # Start Video Thread
         self.video_thread = Thread(target=self.video_loop, daemon=True)

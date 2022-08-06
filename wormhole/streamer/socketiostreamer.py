@@ -4,7 +4,7 @@ from wormhole.streamer import AbstractStreamer
 import time
 from flask_socketio import emit, join_room
 from threading import Thread
-from typing import Any, Callable, Optional
+from typing import Any, Callable
 
 
 class SocketIOStreamerBase(AbstractStreamer):
@@ -16,16 +16,9 @@ class SocketIOStreamerBase(AbstractStreamer):
         self,
         stream_publisher: Callable,
         *args,
-        fps_override: Optional[int] = None,
-        print_fps: bool = False,
         **kwargs
     ):
         super().__init__(*args, **kwargs)
-
-        # Setup Basic Vars
-        self.max_fps = fps_override or self.video.max_fps
-        self.print_fps = print_fps
-
         # Main loop to run for video streams
         self.stream_publisher = stream_publisher
 

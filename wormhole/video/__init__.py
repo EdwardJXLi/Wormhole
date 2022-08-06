@@ -14,22 +14,29 @@ class AbstractVideo():
         self,
         height: int,
         width: int,
-        max_fps: int = 30
+        max_fps: float = 30,
+        print_fps: bool = False
     ):
         # Basic Video Properties
         self.height: int = height
         self.width: int = width
-        self.max_fps: int = max_fps
+        self.max_fps: float = max_fps
+        self.print_fps = print_fps
+        
         # Sanity Check
         if 0 > self.height or 0 > self.width or 0 > self.max_fps:
             raise ValueError("Video Properties cannot smaller than 0!")
+        
         # Video Information
         self._frame: np.ndarray = np.zeros((height, width, 3), np.uint8)
         self.finished_frame: np.ndarray = self._frame
+        
         # Frame Modifiers -> List of functions that change the output video when a new frame arrives
         self.frame_modifiers: list[Callable[[AbstractVideo], None]] = []
         # Frame Subscribers -> List of functions to call when a new frame arrives
         self.frame_subscribers: list[Callable[[AbstractVideo], None]] = []
+        # Set up Frame Controller
+        self.frame_controller = FrameController(self.max_fps, print_fps=self.print_fps)
 
     # Add a function to the frame modifiers
     def add_frame_modifier(self, modifier):
@@ -76,7 +83,7 @@ def render_video(
     video: AbstractVideo,
     height: Optional[int] = None,
     width: Optional[int] = None,
-    max_fps: Optional[int] = None,
+    max_fps: Optional[float] = None,
     print_fps: bool = False,
     window_name="Video Preview"
 ):

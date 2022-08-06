@@ -15,15 +15,11 @@ class MJPEGStreamer(AbstractStreamer):
         self,
         *args,
         boundary: str = "WORMHOLE",
-        fps_override: Optional[int] = None,
-        print_fps: bool = False,
         imencode_config: Optional[list[Any]] = None,
         **kwargs
     ):
         super().__init__(*args, **kwargs)
         self.boundary = boundary
-        self.max_fps = fps_override or self.video.max_fps
-        self.print_fps = print_fps
         self.imencode_config = imencode_config
 
         # Create Video Feed Handler for Flask

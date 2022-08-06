@@ -35,12 +35,14 @@ class FrameController():
     Helper Class to Control Video Frame Rate
     """
 
-    def __init__(self, fps: int, print_fps: bool = False, sleep_func=None, fps_window_delta: float = 5.0):
-        # Core Functionality
-        self.target_fps: int = fps
+    def __init__(self, fps: float, print_fps: bool = False, sleep_func=None, fps_window_delta: float = 5.0):
+        # --- Core Functionality ---
+        self.target_fps: float = fps
         self.last_frame: float = time.time()
         self.frame_time: float = 0.0
-        # Sanity Checks for FPS
+
+        # --- Sanity Checks for FPS ---
+
         # Instantaneous FPS
         self.instantaneous_fps: float = math.inf
         # Average FPS
@@ -53,6 +55,9 @@ class FrameController():
         self.fps_window_start: float = time.time()
         self.fps_window_frames_rendered: int = 0
         self.fps_window: float = math.inf
+
+        # --- Misc Stuff ---
+
         # Sleep Function is used for if a specific non-blocking sleep function is needed.
         # Gevent Patches already do this, so its not that necessary, but keeping it here for compatibility.
         self.sleep_func = sleep_func or time.sleep
@@ -64,8 +69,14 @@ class FrameController():
 
     def next_frame(self):
         # Ensure FPS
-        self.sleep_func(self.get_sleep_time())
+        sleep_time = self.get_sleep_time()
+        if sleep_time:  # Save on the expensive sleep function is no sleep is needed
+            self.sleep_func(sleep_time)
         self.last_frame = time.time()
+        # Update FPS Counter
+        self.update_fps()
+
+    def update_fps(self):
         # Calculate Instantaneous FPS
         instantaneous_fps = 1.0 / self.frame_time
         # Calculate Total Average FPS
@@ -84,4 +95,4 @@ class FrameController():
             ))
 
     def reset_fps_stats(self):
-        self.__init__(self.target_fps, self.print_fps)
+        self.__init__(self.target_fps, self.print_fps, sleep_func=self.sleep_func, fps_window_delta=self.fps_window_delta)

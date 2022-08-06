@@ -1,6 +1,7 @@
 from wormhole.utils import FrameController
 from wormhole.video import AbstractVideo
 
+import math
 from threading import Thread
 
 
@@ -12,13 +13,15 @@ class SoftCopy(AbstractVideo):
     def __init__(
         self,
         original: AbstractVideo,
+        print_fps: bool = False
     ):
         # Initialize Video Object with the original parameters
-        super().__init__(original.height, original.width, original.max_fps)
+        super().__init__(original.height, original.width, original.max_fps, print_fps=print_fps)
 
         # Create a subscriber for the other video stream
         def video_update_subscriber(video):
             self.set_frame(video.get_frame())
+            self.frame_controller.next_frame()
         original.add_frame_subscriber(video_update_subscriber)
 
 
@@ -32,15 +35,12 @@ class HardCopy(AbstractVideo):
         original: AbstractVideo,
         height: int,
         width: int,
-        max_fps: int = 30,
+        max_fps: float = 30,
         print_fps: bool = False
     ):
         # Initialize Video Object with the NEW parameters
-        super().__init__(height, width, max_fps)
+        super().__init__(height, width, max_fps=max_fps, print_fps=print_fps)
         self.original = original
-
-        # Set up Frame Controller
-        self.frame_controller = FrameController(self.max_fps, print_fps=print_fps)
 
         # Start Video Thread
         self.video_thread = Thread(target=self.video_loop, daemon=True)

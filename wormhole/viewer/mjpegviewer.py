@@ -2,6 +2,7 @@ from wormhole.utils import FrameController
 from wormhole.viewer import AbstractViewer
 
 import cv2
+import math
 import numpy as np
 import traceback
 import urllib.request
@@ -18,8 +19,9 @@ class MJPEGViewer(AbstractViewer):
         url: str,
         height: int,
         width: int,
-        max_fps: int = 30,
-        auto_reconnect: bool = True
+        max_fps: float = 30,
+        auto_reconnect: bool = True,
+        print_fps: bool = False
     ):
         # Save basic variables about stream
         self.url = url
@@ -32,13 +34,11 @@ class MJPEGViewer(AbstractViewer):
         # width = width or int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 
         # Initiate Video Parent
-        super().__init__(height, width, max_fps=max_fps)
+        super().__init__(height, width, max_fps=max_fps, print_fps=print_fps)
 
         # Check if Video File Opened
         if not self.cap.isOpened():
             raise ValueError("Video File Not Opened! An Error Probably Occurred.")
-        # Set up Frame Controller
-        self.frame_controller = FrameController(self.max_fps)
 
         # Start Video Thread
         self.video_decoder_thread = Thread(target=self.video_decoder, daemon=True)
@@ -81,7 +81,8 @@ class BufferedMJPEGViewer(AbstractViewer):
         url: str,
         height: int,
         width: int,
-        max_fps: int = 30,
+        max_fps: float = math.inf,
+        print_fps: bool = False,
         read_buffer_size: int = 1024,
         auto_reconnect: bool = True
     ):
@@ -97,7 +98,7 @@ class BufferedMJPEGViewer(AbstractViewer):
         self.video_decoder_thread.start()
 
         # Create Object
-        super().__init__(height, width, max_fps=max_fps)
+        super().__init__(height, width, max_fps=max_fps, print_fps=print_fps)
 
     # Video Decoder Thread
     def video_decoder(self):
@@ -117,6 +118,7 @@ class BufferedMJPEGViewer(AbstractViewer):
                             np_image = np.fromstring(jpg, dtype=np.uint8)  # type: ignore
                             i = cv2.imdecode(np_image, cv2.IMREAD_COLOR)
                             self.set_frame(i)
+                            self.frame_controller.next_frame()
             except Exception as e:
                 if self.auto_reconnect:
                     print(f"Open Camera Error: {e}")
