@@ -14,12 +14,14 @@ class SocketIOStreamerBase(AbstractStreamer):
         stream_publisher: Callable,
         *args, 
         fps_override: Optional[int] = None, 
+        print_fps: bool = False,
         **kwargs
     ):
         super().__init__(*args, **kwargs)
         
         # Setup Basic Vars
         self.max_fps = fps_override or self.video.max_fps
+        self.print_fps = print_fps
         
         # Main loop to run for video streams
         self.stream_publisher = stream_publisher
@@ -57,7 +59,7 @@ class SocketIOStreamerBase(AbstractStreamer):
     def video_streamer(self):
         # Get the flask context
         with self.controller.get_app().app_context():
-            frame_controller = FrameController(self.max_fps)
+            frame_controller = FrameController(self.max_fps, print_fps=self.print_fps)
             while True:
                 if not self.thread_running:
                     return  # Kill the thread if no clients are connected

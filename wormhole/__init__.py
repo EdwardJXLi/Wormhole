@@ -59,13 +59,15 @@ class Wormhole():
             
         # Set up advanced Wormhole features
         self.advanced_features = advanced_features
-        from wormhole.streamer.rawstreamer import RawJPEGStreamer
-        from wormhole.viewer.rawviewer import RawJPEGViewer
+        from wormhole.streamer.rawstreamer import RawJPEGStreamer, RawPNGStreamer, RawWEBPStreamer
+        from wormhole.viewer.rawviewer import RawJPEGViewer, RawPNGViewer, RawWEBPViewer
         from wormhole.streamer.mjpegstreamer import MJPEGStreamer
         from wormhole.viewer.mjpegviewer import MJPEGViewer
         self.supported_protocols = supported_protocols or {  
             # ORDER MATTERS HERE! Ranked in order from most preferred to least preferred!
             "RAWJPEG": (RawJPEGStreamer, RawJPEGViewer),
+            "RAWPNG": (RawPNGStreamer, RawPNGViewer),
+            "RAWWEBP": (RawWEBPStreamer, RawWEBPViewer),
             "MJPEG": (MJPEGStreamer, MJPEGViewer),
         }
         if self.advanced_features:
@@ -183,13 +185,32 @@ class Wormhole():
         # Initialize Camera Video
         raise NotImplementedError()
 
-    def stream_file(self, filename: str, *args, name: str = "default", protocols: Optional[list[str]] = None, **kwargs):
+    def stream_file(
+        self, 
+        filename: str, 
+        *args, 
+        name: str = "default", 
+        protocols: Optional[list[str]] = None, 
+        **kwargs
+    ):
+        # Separate out kwargs for FileVideo object or Streamer Object
+        # As FileVideo is constant, we can hardcode these.
+        file_video_arg_keys = ["max_fps", "height", "width", "repeat", "cv2_config"]
+        file_video_args = {}
+        streamer_args = {}
+        for key, value in kwargs.items():
+            if key in file_video_arg_keys:
+                file_video_args[key] = value
+            else:
+                streamer_args[key] = value
+        
         # Initialize File Video
         from wormhole.video.filevideo import FileVideo
-        video = FileVideo(filename, *args, **kwargs)
-        self.stream_video(video, name=name, protocols=protocols)
+        video = FileVideo(filename, **file_video_args)
+
+        self.stream_video(video, name=name, protocols=protocols, **streamer_args)
         
-    def stream_video(self, video: AbstractVideo, name: str = "default", protocols: Optional[list[str]] = None):
+    def stream_video(self, video: AbstractVideo, *args, name: str = "default", protocols: Optional[list[str]] = None, **kwargs):
         # Check if advanced features are enabled
         if not self.advanced_features:
             raise Exception("Managed Streams Are Only Enabled If Advanced Features Are Enabled!")
@@ -213,7 +234,7 @@ class Wormhole():
             # Get the streamer class
             streamer, _ = self.supported_protocols[proto]
             # Initialize the streamer
-            self.create_stream(streamer, video, f"/wormhole/stream/{name}/{proto.lower()}", strict_url=False)
+            self.create_stream(streamer, video, f"/wormhole/stream/{name}/{proto.lower()}", *args, strict_url=False, **kwargs)
             
         # Add the streamer to the list of managed streams
         self.managed_streams[name] = (video, protocols)

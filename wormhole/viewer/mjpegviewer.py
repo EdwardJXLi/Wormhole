@@ -67,7 +67,7 @@ class MJPEGViewer(AbstractViewer):
             self.frame_controller.next_frame()
     
 # Alternative implementation of the MJPEGViewer class
-class MJPEGViewerRaw(AbstractViewer):
+class BufferedMJPEGViewer(AbstractViewer):
     def __init__(
         self, 
         url: str, 

@@ -12,19 +12,21 @@ class MJPEGStreamer(AbstractStreamer):
         *args, 
         boundary: str = "WORMHOLE", 
         fps_override: Optional[int] = None, 
+        print_fps: bool = False,
         imencode_config: Optional[list[Any]] = None,
         **kwargs
     ):
         super().__init__(*args, **kwargs)
         self.boundary = boundary
         self.max_fps = fps_override or self.video.max_fps
+        self.print_fps = print_fps
         self.imencode_config = imencode_config
 
         # Create Video Feed Handler for Flask
         def video_feed():
             # Render and Send Frames for each client
             def generate_next_frame():
-                frame_controller = FrameController(self.max_fps)
+                frame_controller = FrameController(self.max_fps, print_fps=self.print_fps)
                 while True:
                     _, jpg = cv2.imencode(
                         ".jpg", 

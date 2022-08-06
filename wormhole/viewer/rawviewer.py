@@ -55,3 +55,25 @@ class RawJPEGViewer(RawIMDecodeViewerBase):
     ):
         # Initiate Parent SocketIO Viewer Object
         super().__init__(*args, **kwargs)
+        
+        
+# Viewer for Raw PNG Streaming
+class RawPNGViewer(RawIMDecodeViewerBase):
+    def __init__(
+        self, 
+        *args,
+        **kwargs
+    ):
+        # Initiate Parent SocketIO Viewer Object
+        super().__init__(*args, **kwargs)
+
+
+# Viewer for Raw WEBP Streaming
+class RawWEBPViewer(RawIMDecodeViewerBase):
+    def __init__(
+        self, 
+        *args,
+        **kwargs
+    ):
+        # Initiate Parent SocketIO Viewer Object
+        super().__init__(*args, **kwargs)
