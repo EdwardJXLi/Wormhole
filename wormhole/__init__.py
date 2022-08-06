@@ -190,14 +190,17 @@ class Wormhole():
     def stream_file(
         self,
         filename: str,
-        *args,
         name: str = "default",
         protocols: Optional[list[str]] = None,
+        video_fps: Optional[int] = None,
+        stream_fps: Optional[int] = None,
+        print_video_fps: bool = False,
+        print_stream_fps: bool = False,
         **kwargs
     ):
         # Separate out kwargs for FileVideo object or Streamer Object
         # As FileVideo is constant, we can hardcode these.
-        file_video_arg_keys = ["max_fps", "height", "width", "repeat", "cv2_config"]
+        file_video_arg_keys = ["height", "width", "repeat", "cv2_config"]
         file_video_args = {}
         streamer_args = {}
         for key, value in kwargs.items():
@@ -208,9 +211,9 @@ class Wormhole():
 
         # Initialize File Video
         from wormhole.video.filevideo import FileVideo
-        video = FileVideo(filename, **file_video_args)
+        video = FileVideo(filename, max_fps=video_fps, print_fps=print_video_fps, **file_video_args)
 
-        self.stream_video(video, name=name, protocols=protocols, **streamer_args)
+        self.stream_video(video, name=name, protocols=protocols, fps_override=stream_fps, print_fps=print_stream_fps, **streamer_args)
 
     def stream_video(self, video: AbstractVideo, *args, name: str = "default", protocols: Optional[list[str]] = None, **kwargs):
         # Check if advanced features are enabled

@@ -13,7 +13,7 @@ class FileVideo(AbstractVideo):
 
     def __init__(
         self, filename: str,
-        max_fps: float = 30,
+        max_fps: Optional[float] = 30,
         height: Optional[int] = None,
         width: Optional[int] = None,
         repeat: bool = True,
@@ -31,7 +31,8 @@ class FileVideo(AbstractVideo):
         if cv2_config:
             for key, value in cv2_config:
                 self.cap.set(key, value)
-        # Set height and width
+        # Set height, width, or fps if they are not set by default
+        max_fps = max_fps or int(self.cap.get(cv2.CV_CAP_PROP_FPS))
         height = height or int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         width = width or int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 
