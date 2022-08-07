@@ -68,6 +68,11 @@ class AbstractVideo():
 
     # Set the current frame
     def set_frame(self, frame: np.ndarray):
+        # Sanity Check Frame Size
+        if frame.size != self.height * self.width * 3:
+            raise ValueError(f"Frame Size Does Not Match! Frame Size: {frame.size}, Expected Size: {self.height * self.width * 3}")
+        
+        # Set Frame
         self._frame = frame
         self.call_frame_modifiers()
         self.finished_frame = self._frame

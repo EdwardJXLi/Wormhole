@@ -66,6 +66,13 @@ class MJPEGViewer(AbstractViewer):
                     continue
                 else:
                     self.set_blank_frame()
+
+            # If sizes does not match, resize frame
+            frame_height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+            frame_width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+            if frame_height != self.height or frame_width != self.width:
+                frame = cv2.resize(frame, (self.width, self.height))
+
             # Set Frame
             self.set_frame(frame)
             self.frame_controller.next_frame()
@@ -107,18 +114,32 @@ class BufferedMJPEGViewer(AbstractViewer):
                 with urllib.request.urlopen(self.url) as stream:
                     # Read jpeg image from stream
                     inBytes = bytes()
+
                     # TODO: Find a way to make this faster
                     while True:
+                        # Find start and end of image file
                         inBytes += stream.read(self.read_buffer_size)
                         a = inBytes.find(b'\xff\xd8')
                         b = inBytes.find(b'\xff\xd9')
                         if a != -1 and b != -1:
+                            # Extract image from stream
                             jpg = inBytes[a:b + 2]
                             inBytes = inBytes[b + 2:]
+
+                            # Decode Image
                             np_image = np.fromstring(jpg, dtype=np.uint8)  # type: ignore
-                            i = cv2.imdecode(np_image, cv2.IMREAD_COLOR)
-                            self.set_frame(i)
+                            new_frame = cv2.imdecode(np_image, cv2.IMREAD_COLOR)
+
+                            # If sizes does not match, resize frame
+                            frame_width, frame_height, _ = new_frame.shape
+                            if frame_height != self.height or frame_width != self.width:
+                                new_frame = cv2.resize(new_frame, (self.width, self.height))
+
+                            # Set the frame information
+                            self.set_frame(new_frame)
                             self.frame_controller.next_frame()
+
+            # Catch any errors that may occur in the video decoder
             except Exception as e:
                 if self.auto_reconnect:
                     print(f"Open Stream Error: {e}")

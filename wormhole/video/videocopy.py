@@ -1,7 +1,7 @@
 from wormhole.utils import FrameController
 from wormhole.video import AbstractVideo
 
-import math
+import cv2
 from threading import Thread
 
 
@@ -49,5 +49,13 @@ class HardCopy(AbstractVideo):
     def video_loop(self):
         # Start Video Loop
         while True:
-            self.set_frame(self.original.get_frame())
+            # Get the new video data
+            new_frame = self.original.get_frame()
+
+            # If sizes does not match, resize frame
+            if self.original.height != self.height or self.original.width != self.width:
+                new_frame = cv2.resize(new_frame, (self.width, self.height))
+
+            # Set Frame Size
+            self.set_frame(new_frame)
             self.frame_controller.next_frame()

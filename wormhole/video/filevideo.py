@@ -61,6 +61,13 @@ class FileVideo(AbstractVideo):
                 else:
                     self.set_blank_frame()
                 continue
+
+            # If sizes does not match, resize frame
+            frame_height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+            frame_width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+            if frame_height != self.height or frame_width != self.width:
+                frame = cv2.resize(frame, (self.width, self.height))
+
             # Set Frame
             self.set_frame(frame)
             self.frame_controller.next_frame()
