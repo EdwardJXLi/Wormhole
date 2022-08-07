@@ -7,20 +7,20 @@ import time
 #
 
 
-def blank_frame_color(height: int, width: int, color: tuple):
+def blank_frame_color(width: int, height: int, color: tuple):
     """
     Set the current frame to a blank frame with a given color
     """
-    new_frame = np.zeros((height, width, 3), np.uint8)
+    new_frame = np.zeros((width, height, 3), np.uint8)
     new_frame[:, :, :] = color
     return new_frame
 
 
-def blank_frame_color_rgb(height: int, width: int, r: int, g: int, b: int):
+def blank_frame_color_rgb(width: int, height: int, r: int, g: int, b: int):
     """
     Set the current frame to a blank frame with a given color
     """
-    new_frame = np.zeros((height, width, 3), np.uint8)
+    new_frame = np.zeros((width, height, 3), np.uint8)
     new_frame[:, :, :] = (r, g, b)
     return new_frame
 

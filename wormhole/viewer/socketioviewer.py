@@ -15,8 +15,8 @@ class SocketIOViewerBase(AbstractViewer):
         self,
         data_processor: Callable,
         url: str,
-        height: int,
         width: int,
+        height: int,
         max_fps: float = math.inf,
         print_fps: bool = False,
         *args,
@@ -34,7 +34,7 @@ class SocketIOViewerBase(AbstractViewer):
         self.sio_client = socketio.Client(*args, **kwargs)
 
         # Initiate Video Parent Object
-        super().__init__(height, width, max_fps=max_fps, print_fps=print_fps)
+        super().__init__(width, height, max_fps=max_fps, print_fps=print_fps)
 
         # Create SocketIO Handler for when raw images stream in
         # Proxying the function with a lambda so that the self context is also passed in

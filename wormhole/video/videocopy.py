@@ -16,7 +16,7 @@ class SoftCopy(AbstractVideo):
         print_fps: bool = False
     ):
         # Initialize Video Object with the original parameters
-        super().__init__(original.height, original.width, original.max_fps, print_fps=print_fps)
+        super().__init__(original.width, original.height, original.max_fps, print_fps=print_fps)
 
         # Create a subscriber for the other video stream
         def video_update_subscriber(video):
@@ -33,13 +33,13 @@ class HardCopy(AbstractVideo):
     def __init__(
         self,
         original: AbstractVideo,
-        height: int,
         width: int,
+        height: int,
         max_fps: float = 30,
         print_fps: bool = False
     ):
         # Initialize Video Object with the NEW parameters
-        super().__init__(height, width, max_fps=max_fps, print_fps=print_fps)
+        super().__init__(width, height, max_fps=max_fps, print_fps=print_fps)
         self.original = original
 
         # Start Video Thread
@@ -53,7 +53,7 @@ class HardCopy(AbstractVideo):
             new_frame = self.original.get_frame()
 
             # If sizes does not match, resize frame
-            if self.original.height != self.height or self.original.width != self.width:
+            if self.original.width != self.width or self.original.height != self.height:
                 new_frame = cv2.resize(new_frame, (self.width, self.height))
 
             # Set Frame Size

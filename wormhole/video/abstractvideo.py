@@ -12,25 +12,25 @@ class AbstractVideo():
 
     def __init__(
         self,
-        height: int,
         width: int,
+        height: int,
         max_fps: float = 30,
         print_fps: bool = False
     ):
         # Basic Video Properties
-        self.height: int = height
         self.width: int = width
+        self.height: int = height
         self.max_fps: float = max_fps
         self.print_fps = print_fps
-        
+
         # Sanity Check
-        if 0 > self.height or 0 > self.width or 0 > self.max_fps:
+        if 0 > self.width or 0 > self.height or 0 > self.max_fps:
             raise ValueError("Video Properties cannot smaller than 0!")
-        
+
         # Video Information
-        self._frame: np.ndarray = np.zeros((height, width, 3), np.uint8)
+        self._frame: np.ndarray = np.zeros((width, height, 3), np.uint8)
         self.finished_frame: np.ndarray = self._frame
-        
+
         # Frame Modifiers -> List of functions that change the output video when a new frame arrives
         self.frame_modifiers: list[Callable[[AbstractVideo], None]] = []
         # Frame Subscribers -> List of functions to call when a new frame arrives
@@ -69,9 +69,9 @@ class AbstractVideo():
     # Set the current frame
     def set_frame(self, frame: np.ndarray):
         # Sanity Check Frame Size
-        if frame.size != self.height * self.width * 3:
+        if frame.size != self.width * self.height * 3:
             raise ValueError(f"Frame Size Does Not Match! Frame Size: {frame.size}, Expected Size: {self.height * self.width * 3}")
-        
+
         # Set Frame
         self._frame = frame
         self.call_frame_modifiers()
@@ -80,20 +80,20 @@ class AbstractVideo():
 
     # Set the current frame to a blank frame
     def set_blank_frame(self):
-        new_frame = np.zeros((self.height, self.width, 3), np.uint8)
+        new_frame = np.zeros((self.width, self.height, 3), np.uint8)
         self.set_frame(new_frame)
 
 
 def render_video(
     video: AbstractVideo,
-    height: Optional[int] = None,
     width: Optional[int] = None,
+    height: Optional[int] = None,
     max_fps: Optional[float] = None,
     print_fps: bool = False,
     window_name="Video Preview"
 ):
-    height = height or video.height
     width = width or video.width
+    height = height or video.height
     max_fps = max_fps or video.max_fps
     frame_controller = FrameController(max_fps, print_fps=print_fps)
     while True:

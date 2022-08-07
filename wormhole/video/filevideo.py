@@ -14,8 +14,8 @@ class FileVideo(AbstractVideo):
     def __init__(
         self, filename: str,
         max_fps: Optional[float] = 30,
-        height: Optional[int] = None,
         width: Optional[int] = None,
+        height: Optional[int] = None,
         repeat: bool = True,
         cv2_config: Optional[list[tuple[Any, Any]]] = None,
         print_fps: bool = False
@@ -31,13 +31,13 @@ class FileVideo(AbstractVideo):
         if cv2_config:
             for key, value in cv2_config:
                 self.cap.set(key, value)
-        # Set height, width, or fps if they are not set by default
+        # Set width, height, or fps if they are not set by default
         max_fps = max_fps or int(self.cap.get(cv2.CAP_PROP_FPS))
-        height = height or int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         width = width or int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        height = height or int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
         # Initialize Video Object
-        super().__init__(height, width, max_fps)
+        super().__init__(width, height, max_fps)
 
         # Check if Video File Opened
         if not self.cap.isOpened():
@@ -63,9 +63,9 @@ class FileVideo(AbstractVideo):
                 continue
 
             # If sizes does not match, resize frame
-            frame_height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
             frame_width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-            if frame_height != self.height or frame_width != self.width:
+            frame_height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+            if frame_width != self.width or frame_height != self.height:
                 frame = cv2.resize(frame, (self.width, self.height))
 
             # Set Frame

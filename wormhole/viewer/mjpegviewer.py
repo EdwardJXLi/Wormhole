@@ -17,8 +17,8 @@ class MJPEGViewer(AbstractViewer):
     def __init__(
         self,
         url: str,
-        height: int,
         width: int,
+        height: int,
         max_fps: float = 30,
         auto_reconnect: bool = True,
         print_fps: bool = False
@@ -29,12 +29,9 @@ class MJPEGViewer(AbstractViewer):
 
         # Open Video Link
         self.cap = cv2.VideoCapture(self.url)
-        # Set height and width
-        # height = height or int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        # width = width or int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 
         # Initiate Video Parent
-        super().__init__(height, width, max_fps=max_fps, print_fps=print_fps)
+        super().__init__(width, height, max_fps=max_fps, print_fps=print_fps)
 
         # Check if Video File Opened
         if not self.cap.isOpened():
@@ -68,9 +65,9 @@ class MJPEGViewer(AbstractViewer):
                     self.set_blank_frame()
 
             # If sizes does not match, resize frame
-            frame_height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
             frame_width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-            if frame_height != self.height or frame_width != self.width:
+            frame_height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+            if frame_width != self.width or frame_height != self.height:
                 frame = cv2.resize(frame, (self.width, self.height))
 
             # Set Frame
@@ -86,8 +83,8 @@ class BufferedMJPEGViewer(AbstractViewer):
     def __init__(
         self,
         url: str,
-        height: int,
         width: int,
+        height: int,
         max_fps: float = math.inf,
         print_fps: bool = False,
         read_buffer_size: int = 1024,
@@ -105,7 +102,7 @@ class BufferedMJPEGViewer(AbstractViewer):
         self.video_decoder_thread.start()
 
         # Create Object
-        super().__init__(height, width, max_fps=max_fps, print_fps=print_fps)
+        super().__init__(width, height, max_fps=max_fps, print_fps=print_fps)
 
     # Video Decoder Thread
     def video_decoder(self):
@@ -132,7 +129,7 @@ class BufferedMJPEGViewer(AbstractViewer):
 
                             # If sizes does not match, resize frame
                             frame_width, frame_height, _ = new_frame.shape
-                            if frame_height != self.height or frame_width != self.width:
+                            if frame_width != self.width or frame_height != self.height:
                                 new_frame = cv2.resize(new_frame, (self.width, self.height))
 
                             # Set the frame information
