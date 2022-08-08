@@ -39,7 +39,7 @@ class HardCopy(AbstractVideo):
         **kwargs  # Any Additional Arguments for AbstractVideo
     ):
         # Initialize Video Object with the NEW parameters
-        super().__init__(width, height, max_fps=max_fps, **kwargs)
+        super().__init__(width, height, max_fps, **kwargs)
         self.original = original
 
         # Start Video Thread

@@ -31,7 +31,7 @@ class MJPEGViewer(AbstractViewer):
         self.cap = cv2.VideoCapture(self.url)
 
         # Initiate Video Parent
-        super().__init__(width, height, max_fps=max_fps, **kwargs)
+        super().__init__(width, height, max_fps, **kwargs)
 
         # Check if Video File Opened
         if not self.cap.isOpened():
@@ -102,7 +102,7 @@ class BufferedMJPEGViewer(AbstractViewer):
         self.video_decoder_thread.start()
 
         # Create Object
-        super().__init__(width, height, max_fps=max_fps, **kwargs)
+        super().__init__(width, height, max_fps, **kwargs)
 
     # Video Decoder Thread
     def video_decoder(self):

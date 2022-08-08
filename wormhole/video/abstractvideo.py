@@ -14,13 +14,15 @@ class AbstractVideo():
         self,
         width: int,
         height: int,
-        max_fps: float = 30,
+        max_fps: float,
+        pixel_size: int = 3,
         print_fps: bool = False,
         frame_modifiers = None,
         frame_subscribers = None
     ):
         # Basic Video Properties
         self.width: int = width
+        self.pixel_size: int = pixel_size
         self.height: int = height
         self.max_fps: float = max_fps
         self.print_fps: bool = print_fps
@@ -30,7 +32,7 @@ class AbstractVideo():
             raise ValueError("Video Properties cannot smaller than 0!")
 
         # Video Information
-        self._frame: np.ndarray = np.zeros((width, height, 3), np.uint8)
+        self._frame: np.ndarray = np.zeros((width, height, self.pixel_size), np.uint8)
         self.finished_frame: np.ndarray = self._frame
 
         # Frame Modifiers -> List of functions that change the output video when a new frame arrives
@@ -71,8 +73,8 @@ class AbstractVideo():
     # Set the current frame
     def set_frame(self, frame: np.ndarray):
         # Sanity Check Frame Size
-        if frame.size != self.width * self.height * 3:
-            raise ValueError(f"Frame Size Does Not Match! Frame Size: {frame.size}, Expected Size: {self.height * self.width * 3}")
+        if frame.size != self.width * self.height * self.pixel_size:
+            raise ValueError(f"Frame Size Does Not Match! Frame Size: {frame.size}, Expected Size: {self.height * self.width * self.pixel_size}")
 
         # Set Frame
         self._frame = frame
@@ -82,7 +84,7 @@ class AbstractVideo():
 
     # Set the current frame to a blank frame
     def set_blank_frame(self):
-        new_frame = np.zeros((self.width, self.height, 3), np.uint8)
+        new_frame = np.zeros((self.width, self.height, self.pixel_size), np.uint8)
         self.set_frame(new_frame)
 
 

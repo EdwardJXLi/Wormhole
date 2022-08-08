@@ -169,6 +169,7 @@ class Wormhole():
                 "stream_info": {
                     "width": video_obj.width,
                     "height": video_obj.height,
+                    "pixel_size": video_obj.pixel_size,
                     "max_fps": video_obj.max_fps
                 }
             }
@@ -278,7 +279,7 @@ class Wormhole():
             raise Exception(f"Requested Stream {name} not being streamed by the server! The current streams are: {server_streams}")
 
         # Sync Stream Information
-        stream_protocols, stream_width, stream_height, stream_fps = self.sync_stream(hostname, name)
+        stream_protocols, stream_width, stream_height, stream_pixel_size, stream_fps = self.sync_stream(hostname, name)
 
         # Find best protocol to use for stream
         for proto in stream_protocols:
@@ -292,7 +293,7 @@ class Wormhole():
         _, viewer = self.supported_protocols[best_protocol]
 
         # Initialize the viewer
-        return viewer(f"{hostname}/wormhole/stream/{name}/{best_protocol.lower()}", stream_width, stream_height, stream_fps)
+        return viewer(f"{hostname}/wormhole/stream/{name}/{best_protocol.lower()}", stream_width, stream_height, max_fps=stream_fps, pixel_size=stream_pixel_size)
 
     def sync_wormhole(self, hostname: str):
         # Sync information with wormhole server
@@ -358,10 +359,10 @@ class Wormhole():
 
         # Verify Stream Response
         stream_info = resp_json.get("stream_info")
-        if not all(key in stream_info for key in ["width", "height", "max_fps"]):
+        if not all(key in stream_info for key in ["width", "height", "pixel_size", "max_fps"]):
             raise Exception("Failed To Sync With Wormhole Stream! Stream Info is Missing Json Fields!")
 
-        return resp_json.get("supported_protocols"), stream_info.get("width", 0), stream_info.get("height", 0), stream_info.get("max_fps", 0)
+        return resp_json.get("supported_protocols"), stream_info.get("width", 0), stream_info.get("height", 0), stream_info.get("pixel_size", 0), stream_info.get("max_fps", 0)
 
     #
     # --- Helper Streaming Functions ---
