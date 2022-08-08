@@ -207,7 +207,7 @@ class Wormhole():
     ):
         # Separate out kwargs for FileVideo object or Streamer Object
         # As FileVideo is constant, we can hardcode these.
-        file_video_arg_keys = ["width", "height", "repeat", "cv2_config"]
+        file_video_arg_keys = ["width", "height", "repeat", "cv2_config", "pixel_size", "frame_modifiers", "frame_subscribers"]
         file_video_args = {}
         streamer_args = {}
         for key, value in kwargs.items():
