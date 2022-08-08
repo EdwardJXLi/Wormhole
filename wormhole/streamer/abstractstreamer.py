@@ -3,6 +3,7 @@ from wormhole.video import AbstractVideo
 
 from typing import Optional
 
+
 class AbstractStreamer():
     """
     General Abstract Streamer Class for Wormhole.

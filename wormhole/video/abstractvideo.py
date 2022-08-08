@@ -17,8 +17,8 @@ class AbstractVideo():
         max_fps: float,
         pixel_size: int = 3,
         print_fps: bool = False,
-        frame_modifiers = None,
-        frame_subscribers = None
+        frame_modifiers=None,
+        frame_subscribers=None
     ):
         # Basic Video Properties
         self.width: int = width
