@@ -15,13 +15,15 @@ class AbstractVideo():
         width: int,
         height: int,
         max_fps: float = 30,
-        print_fps: bool = False
+        print_fps: bool = False,
+        frame_modifiers = None,
+        frame_subscribers = None
     ):
         # Basic Video Properties
         self.width: int = width
         self.height: int = height
         self.max_fps: float = max_fps
-        self.print_fps = print_fps
+        self.print_fps: bool = print_fps
 
         # Sanity Check
         if 0 > self.width or 0 > self.height or 0 > self.max_fps:
@@ -32,9 +34,9 @@ class AbstractVideo():
         self.finished_frame: np.ndarray = self._frame
 
         # Frame Modifiers -> List of functions that change the output video when a new frame arrives
-        self.frame_modifiers: list[Callable[[AbstractVideo], None]] = []
+        self.frame_modifiers: list[Callable[[AbstractVideo], None]] = frame_modifiers or []
         # Frame Subscribers -> List of functions to call when a new frame arrives
-        self.frame_subscribers: list[Callable[[AbstractVideo], None]] = []
+        self.frame_subscribers: list[Callable[[AbstractVideo], None]] = frame_subscribers or []
         # Set up Frame Controller
         self.frame_controller = FrameController(self.max_fps, print_fps=self.print_fps)
 

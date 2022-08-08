@@ -13,10 +13,10 @@ class SoftCopy(AbstractVideo):
     def __init__(
         self,
         original: AbstractVideo,
-        print_fps: bool = False
+        **kwargs  # Any Additional Arguments for AbstractVideo
     ):
         # Initialize Video Object with the original parameters
-        super().__init__(original.width, original.height, original.max_fps, print_fps=print_fps)
+        super().__init__(original.width, original.height, original.max_fps, **kwargs)
 
         # Create a subscriber for the other video stream
         def video_update_subscriber(video):
@@ -36,10 +36,10 @@ class HardCopy(AbstractVideo):
         width: int,
         height: int,
         max_fps: float = 30,
-        print_fps: bool = False
+        **kwargs  # Any Additional Arguments for AbstractVideo
     ):
         # Initialize Video Object with the NEW parameters
-        super().__init__(width, height, max_fps=max_fps, print_fps=print_fps)
+        super().__init__(width, height, max_fps=max_fps, **kwargs)
         self.original = original
 
         # Start Video Thread

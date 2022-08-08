@@ -21,7 +21,7 @@ class MJPEGViewer(AbstractViewer):
         height: int,
         max_fps: float = 30,
         auto_reconnect: bool = True,
-        print_fps: bool = False
+        **kwargs  # Any Additional Arguments for AbstractVideo
     ):
         # Save basic variables about stream
         self.url = url
@@ -31,7 +31,7 @@ class MJPEGViewer(AbstractViewer):
         self.cap = cv2.VideoCapture(self.url)
 
         # Initiate Video Parent
-        super().__init__(width, height, max_fps=max_fps, print_fps=print_fps)
+        super().__init__(width, height, max_fps=max_fps, **kwargs)
 
         # Check if Video File Opened
         if not self.cap.isOpened():
@@ -86,9 +86,9 @@ class BufferedMJPEGViewer(AbstractViewer):
         width: int,
         height: int,
         max_fps: float = math.inf,
-        print_fps: bool = False,
         read_buffer_size: int = 1024,
-        auto_reconnect: bool = True
+        auto_reconnect: bool = True,
+        **kwargs  # Any Additional Arguments for AbstractVideo
     ):
         # Save basic variables about stream
         self.url = url
@@ -102,7 +102,7 @@ class BufferedMJPEGViewer(AbstractViewer):
         self.video_decoder_thread.start()
 
         # Create Object
-        super().__init__(width, height, max_fps=max_fps, print_fps=print_fps)
+        super().__init__(width, height, max_fps=max_fps, **kwargs)
 
     # Video Decoder Thread
     def video_decoder(self):

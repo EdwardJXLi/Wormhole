@@ -18,7 +18,7 @@ class FileVideo(AbstractVideo):
         height: Optional[int] = None,
         repeat: bool = True,
         cv2_config: Optional[list[tuple[Any, Any]]] = None,
-        print_fps: bool = False
+        **kwargs  # Any Additional Arguments for AbstractVideo
     ):
         # Basic Video Properties
         self.filename: str = filename
@@ -37,13 +37,13 @@ class FileVideo(AbstractVideo):
         height = height or int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
         # Initialize Video Object
-        super().__init__(width, height, max_fps)
+        super().__init__(width, height, max_fps, **kwargs)
 
         # Check if Video File Opened
         if not self.cap.isOpened():
             raise ValueError("Video File Not Opened! An Error Probably Occurred.")
         # Set up Frame Controller
-        self.frame_controller = FrameController(self.max_fps, print_fps=print_fps)
+        self.frame_controller = FrameController(self.max_fps, print_fps=self.print_fps)
 
         # Start Video Thread
         self.video_thread = Thread(target=self.video_loop, daemon=True)
