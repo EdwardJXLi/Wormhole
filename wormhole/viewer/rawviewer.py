@@ -50,7 +50,7 @@ class RawIMDecodeViewerBase(SocketIOViewerBase):
         new_frame = cv2.imdecode(np_image, cv2.IMREAD_COLOR)
 
         # If sizes does not match, resize frame
-        frame_width, frame_height, _ = new_frame.shape
+        frame_height, frame_width, _ = new_frame.shape
         if frame_width != self.width or frame_height != self.height:
             new_frame = cv2.resize(new_frame, (self.width, self.height))
 

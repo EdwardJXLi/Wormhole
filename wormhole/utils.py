@@ -99,8 +99,9 @@ def draw_transparent_overlay(frame, overlay_image, position: tuple[int, int], ov
     # Extract the positions
     pos_x, pos_y = position
     
-    # If size changes are needed, resize overlay image
-    if overlay_size != overlay_image.shape[:2]:
+    # If sizes does not match, resize frame
+    frame_height, frame_width, _ = overlay_image.shape
+    if (frame_width, frame_height) != overlay_size:
         overlay_image = cv2.resize(overlay_image, overlay_size)
 
     # Extract the alpha mask of the RGBA image, convert to RGB
@@ -202,7 +203,7 @@ def render_fraps_fps(video):
     """
     
     # Get the fps
-    fps = str(int(min(video.frame_controller.average_fps, 99999)))
+    fps = str(int(min(video.frame_controller.average_fps, 99999)))  # Fixes a small bug with inf fps
     # Render the fps
     video._frame = draw_text(video._frame, f"{fps}", (video.width - len(fps) * 20 - 10, 30), font_color=(0, 0, 0), font_stroke=6)
     video._frame = draw_text(video._frame, f"{fps}", (video.width - len(fps) * 20 - 10, 30), font_color=(0, 255, 255))
