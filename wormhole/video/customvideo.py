@@ -5,6 +5,7 @@ import numpy as np
 from threading import Thread
 from typing import Callable, Optional
 
+
 class CustomVideo(AbstractVideo):
     """
     Creates a video object from a custom video stream.
@@ -12,7 +13,7 @@ class CustomVideo(AbstractVideo):
     """
 
     def __init__(
-        self, 
+        self,
         width: int,
         height: int,
         max_fps: float,
@@ -43,7 +44,7 @@ class CustomVideo(AbstractVideo):
             if self.frame_generator:
                 # Get a new frame from the frame generator
                 frame = self.frame_generator(self)
-                # The frame generator might've already set the frame using set_frame(), 
+                # The frame generator might've already set the frame using set_frame(),
                 # so only run set_frame again if the return type is of ndarray
                 if isinstance(frame, np.ndarray):
                     self.set_frame(frame)

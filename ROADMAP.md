@@ -19,14 +19,14 @@ Of course, this project won't be done in just over a weekend or two. Wormhole's 
 - [ ] Basic Video Rendering Functionality
     - [ ] Webcam / Cameras
     - [X] Video Files
-    - [ ] Image Files
+    - [X] Image Files
     - [X] Copies of Videos
-    - [ ] Custom Video Streams
-- [ ] Basic Video Streaming Functionality
+    - [X] Custom Video Streams
+- [X] Basic Video Streaming Functionality
     - [X] MJPEG Streams
     - [X] Raw Image Streams
     - [X] Raw Streams
-- [ ] Basic Video Viewing Functionality
+- [X] Basic Video Viewing Functionality
     - [X] MJPEG Streams
     - [X] Raw Image Streams
     - [X] Raw Streams
