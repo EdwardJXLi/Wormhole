@@ -327,7 +327,10 @@ class FrameController():
 
     def update_fps(self):
         # Calculate Instantaneous FPS
-        self.instantaneous_fps = 1.0 / self.frame_time
+        if self.frame_time != 0.0:  # Fix bug where frame is so fast that it divides by zero
+            self.instantaneous_fps = 1.0 / self.frame_time
+        else:
+            self.instantaneous_fps = math.inf
         # Calculate Total Average FPS
         self.frames_rendered += 1
         self.average_fps = self.frames_rendered / (time.time() - self.start_time)
