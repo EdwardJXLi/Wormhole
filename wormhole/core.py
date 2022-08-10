@@ -223,6 +223,7 @@ class Wormhole():
         from wormhole.video import FileVideo
         video = FileVideo(filename, max_fps=video_fps, print_fps=print_video_fps, **file_video_args)
 
+        logging.info("Creating Managed Video Stream From File!")
         self.stream_video(video, name=name, protocols=protocols, fps_override=stream_fps, print_fps=print_stream_fps, **streamer_args)
 
     def stream_video(self, video: AbstractVideo, *args, name: str = "default", protocols: Optional[list[str]] = None, **kwargs):
@@ -236,6 +237,7 @@ class Wormhole():
             raise Exception("Protocols List Is Empty!")
         if any([p not in self.supported_protocols.keys() for p in protocols]):
             raise Exception("Protocols List Contains Unsupported Protocols!")
+        logging.debug(f"Wormhole Sync: Server Supports {protocols}")
 
         # Process Name
         name = name.lower()
@@ -243,12 +245,14 @@ class Wormhole():
             raise Exception("Name Must Be Alphanumeric!")
         if name in self.managed_streams:
             raise Exception(f"Name {name} Is Already Used!")
+        logging.debug(f"Wormhole Sync: Creating Managed Stream With Name: {name}")
 
         # For each given protocol, start streaming!
         for proto in protocols:
             # Get the streamer class
             streamer, _ = self.supported_protocols[proto]
             # Initialize the streamer
+            logging.debug(f"Wormhole Sync: Setting Up Stream Process With Protocol {proto}")
             self.create_stream(streamer, video, f"/wormhole/stream/{name}/{proto.lower()}", *args, strict_url=False, **kwargs)
 
         # Add the streamer to the list of managed streams
@@ -268,21 +272,25 @@ class Wormhole():
         name = name.lower()
         if not name.isalnum():
             raise Exception("Name Must Be Alphanumeric!")
+        logging.debug(f"Wormhole Sync: Viewing Managed Stream With Name: {name}")
 
         # Verify hostname is valid
         if not hostname.startswith("http://") and not hostname.startswith("https://"):
             hostname = f"http://{hostname}"
         if hostname.endswith("/"):
             hostname = hostname[:-1]
+        logging.debug(f"Wormhole Sync: Connecting To Host: {hostname}")
         # TODO: use regex to validate hostname, but idk regex
 
         # Sync with the server for information
         server_streams = self.sync_wormhole(hostname)
         if name not in server_streams:
             raise Exception(f"Requested Stream {name} not being streamed by the server! The current streams are: {server_streams}")
+        logging.debug(f"Wormhole Sync: Stream {name} is available on the server!")
 
         # Sync Stream Information
         stream_protocols, stream_width, stream_height, stream_pixel_size, stream_fps = self.sync_stream(hostname, name)
+        logging.debug(f"Wormhole Sync: Stream {name} supports protocols: {stream_protocols} and has args: Width: {stream_width}, Height: {stream_height}, Pixel Size: {stream_pixel_size}, FPS: {stream_fps}!")
 
         # Find best protocol to use for stream
         for proto in stream_protocols:
@@ -291,14 +299,18 @@ class Wormhole():
                 break
         else:
             raise Exception(f"No Supported Protocols Found For Stream {name}! This error occurred after sync, which should never happen!")
+        logging.debug(f"Wormhole Sync: Decided Best Protocol Is {best_protocol}!")
 
         # Get the viewer class
         _, viewer = self.supported_protocols[best_protocol]
 
         # Initialize the viewer
+        logging.debug(f"Wormhole Sync: Initializing Viewer with {best_protocol}!")
         return viewer(f"{hostname}/wormhole/stream/{name}/{best_protocol.lower()}", stream_width, stream_height, max_fps=stream_fps, pixel_size=stream_pixel_size)
 
     def sync_wormhole(self, hostname: str):
+        logging.debug(f"Wormhole Sync: Syncing With Wormhole Server {hostname}!")
+        
         # Sync information with wormhole server
         resp = requests.post(
             url=f"{hostname}/wormhole/sync",
@@ -315,6 +327,7 @@ class Wormhole():
         resp_json = resp.json()
         if not resp_json:
             raise Exception("Failed To Sync With Wormhole Server! Invalid Json Response!")
+        logging.debug(f"Wormhole Sync: Server Responded With: {resp_json}!")
 
         # Verify that all json fields are present
         # Yes, match exists, BUT this program is supposed to support python3.6 onwards
@@ -339,9 +352,12 @@ class Wormhole():
             raise Exception(f"Failed To Sync With Wormhole Server! Server Does Not Have Any Supported Protocols!")
 
         # Return with server information
+        logging.debug(f"Wormhole Sync: Server Sync Finished!")
         return resp_json.get("managed_streams", [])
 
     def sync_stream(self, hostname: str, name: str):
+        logging.debug(f"Wormhole Sync: Syncing With Stream {name} On Wormhole Server {hostname}!")
+        
         # Sync information with wormhole server
         resp = requests.get(
             url=f"{hostname}/wormhole/stream/{name}/sync"
@@ -354,6 +370,7 @@ class Wormhole():
         resp_json = resp.json()
         if not resp_json:
             raise Exception("Failed To Sync With Wormhole Stream! Invalid Json Response!")
+        logging.debug(f"Wormhole Sync: Server Responded With: {resp_json}!")
 
         # Verify that all json fields are present
         # Yes, match exists, BUT this program is supposed to support python3.6 onwards
@@ -365,6 +382,7 @@ class Wormhole():
         if not all(key in stream_info for key in ["width", "height", "pixel_size", "max_fps"]):
             raise Exception("Failed To Sync With Wormhole Stream! Stream Info is Missing Json Fields!")
 
+        logging.debug(f"Wormhole Sync: Stream Sync Finished!")
         return resp_json.get("supported_protocols"), stream_info.get("width", 0), stream_info.get("height", 0), stream_info.get("pixel_size", 0), stream_info.get("max_fps", 0)
 
     #
