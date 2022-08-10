@@ -14,7 +14,7 @@ def blank_frame_color(width: int, height: int, color: tuple, pixel_size: int = 3
     """
     Set the current frame to a blank frame with a given color
     """
-    
+
     new_frame = np.zeros((height, width, pixel_size), np.uint8)
     new_frame[:, :, :] = color
     return new_frame
@@ -24,7 +24,7 @@ def blank_frame_color_rgb(width: int, height: int, r: int, g: int, b: int, pixel
     """
     Set the current frame to a blank frame with a given color
     """
-    
+
     new_frame = np.zeros((height, width, pixel_size), np.uint8)
     new_frame[:, :, :] = (r, g, b)
     return new_frame
@@ -42,7 +42,7 @@ def draw_text(
     """
     Draws text at given location
     """
-    
+
     return cv2.putText(
         frame,
         text,
@@ -63,7 +63,7 @@ def draw_multiline_text(
     """
     Helper function to draw multiple lines of text at once. Automatically determines ideal rendering size
     """
-    
+
     # Parse the text input
     if type(text) is str:
         text = [text]
@@ -98,7 +98,7 @@ def draw_transparent_overlay(frame, overlay_image, position: tuple[int, int], ov
     """
     # Extract the positions
     pos_x, pos_y = position
-    
+
     # If sizes does not match, resize frame
     frame_height, frame_width, _ = overlay_image.shape
     if (frame_width, frame_height) != overlay_size:
@@ -146,7 +146,7 @@ def render_watermark(video):
     """
     Renders a "Powered By Wormhole" watermark at the bottom of the screen
     """
-    
+
     # Checks if loaded image is already in cache
     wormhole_watermark = globals().get("wormhole_watermark")
     if wormhole_watermark is None:
@@ -160,7 +160,7 @@ def render_watermark(video):
     padding = max(video.height // 50, video.width // 50)
 
     # --- Calculate the watermark position ---
-    
+
     # Get watermark height and width
     wm_height, wm_width = wormhole_watermark.shape[:2]
 
@@ -176,7 +176,7 @@ def render_watermark(video):
     # Get the proper widths and heights
     width = int(wm_width * ratio)
     height = int(wm_height * ratio)
-    
+
     # Render the watermark onto a copy of the frame
     watermarked_frame = draw_transparent_overlay(video._frame.copy(), wormhole_watermark, (padding, video.height - height - padding), (width, height))
 
@@ -192,7 +192,7 @@ def render_fps(video):
     """
     Render the current fps on the current frame
     """
-    
+
     # Render the fps
     video._frame = draw_text(video._frame, f"FPS: {video.frame_controller.average_fps}", (10, 30))
 
@@ -201,7 +201,7 @@ def render_fraps_fps(video):
     """
     Render the current fps in the top right corner like fraps
     """
-    
+
     # Get the fps
     fps = str(int(min(video.frame_controller.average_fps, 99999)))  # Fixes a small bug with inf fps
     # Render the fps
@@ -213,7 +213,7 @@ def render_full_fps(video):
     """
     Renders full FPS statistics on the current frame. Includes: Frame Time, Instantaneous FPS, FPS over X seconds, and Average FPS
     """
-    
+
     # Render the fps
     video._frame = draw_multiline_text(video._frame, video.width, video.height, [
         f"Frame Time: {video.frame_controller.frame_time * 1000:.2f} ms",
@@ -227,7 +227,7 @@ def render_debug_info(video):
     """
     Renders full debug information about the video stream
     """
-    
+
     # Render the fps
     video._frame = draw_multiline_text(video._frame, video.width, video.height, [
         f"=== [Debug Information] ===",
@@ -261,7 +261,7 @@ def grayscale_filter(video):
     """
     Makes video black and white
     """
-    
+
     video._frame = cv2.cvtColor(video._frame, cv2.COLOR_BGR2GRAY)
     video._frame = cv2.cvtColor(video._frame, cv2.COLOR_GRAY2BGR)
 
@@ -270,7 +270,7 @@ def inverse_filter(video):
     """
     Inverts all colors in the video
     """
-    
+
     video._frame = cv2.bitwise_not(video._frame)
 
 

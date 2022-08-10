@@ -304,7 +304,7 @@ class Wormhole():
                 # Initialize the viewer
                 logging.debug(f"Wormhole Sync: Attempting to Initializing Viewer with {proto}!")
                 viewer_obj = viewer(f"{hostname}/wormhole/stream/{name}/{proto.lower()}", stream_width, stream_height, max_fps=stream_fps, pixel_size=stream_pixel_size)
-                
+
                 logging.debug(f"Success! Using {proto} for streaming")
                 return viewer_obj
             except Exception as e:
@@ -316,7 +316,7 @@ class Wormhole():
 
     def sync_wormhole(self, hostname: str):
         logging.debug(f"Wormhole Sync: Syncing With Wormhole Server {hostname}!")
-        
+
         # Sync information with wormhole server
         resp = requests.post(
             url=f"{hostname}/wormhole/sync",
@@ -363,7 +363,7 @@ class Wormhole():
 
     def sync_stream(self, hostname: str, name: str):
         logging.debug(f"Wormhole Sync: Syncing With Stream {name} On Wormhole Server {hostname}!")
-        
+
         # Sync information with wormhole server
         resp = requests.get(
             url=f"{hostname}/wormhole/stream/{name}/sync"

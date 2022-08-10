@@ -12,7 +12,7 @@ class FileVideo(AbstractVideo):
     """
 
     def __init__(
-        self, 
+        self,
         filename: str,
         max_fps: Optional[float] = 30,
         width: Optional[int] = None,
@@ -20,7 +20,7 @@ class FileVideo(AbstractVideo):
         repeat: bool = True,
         cv2_config: Optional[list[tuple[Any, Any]]] = None,
         **kwargs  # Any Additional Arguments for AbstractVideo
-    ):        
+    ):
         # Basic Video Properties
         self.filename: str = filename
         # Optional Video Properties

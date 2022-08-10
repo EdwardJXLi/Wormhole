@@ -13,7 +13,7 @@ class SoftCopy(AbstractVideo):
         self,
         original: AbstractVideo,
         **kwargs  # Any Additional Arguments for AbstractVideo
-    ):        
+    ):
         # Initialize Video Object with the original parameters
         super().__init__(original.width, original.height, original.max_fps, **kwargs)
 
@@ -36,7 +36,7 @@ class HardCopy(AbstractVideo):
         height: int,
         max_fps: float = 30,
         **kwargs  # Any Additional Arguments for AbstractVideo
-    ):        
+    ):
         # Initialize Video Object with the NEW parameters
         super().__init__(width, height, max_fps, **kwargs)
         self.original = original

@@ -19,7 +19,7 @@ class ImageVideo(AbstractVideo):
         width: Optional[int] = None,
         height: Optional[int] = None,
         **kwargs  # Any Additional Arguments for AbstractVideo
-    ):        
+    ):
         # Basic Video Properties
         self.filename: str = filename
 

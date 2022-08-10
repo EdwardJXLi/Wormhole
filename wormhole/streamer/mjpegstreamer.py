@@ -44,7 +44,7 @@ class MJPEGStreamer(AbstractStreamer):
                         logging.error(f"Error While Generating JPEG for Stream! {e}")
                         traceback.print_exc()
                         time.sleep(1)
-                        
+
                         # Reset FPS Statistics in case the video works again
                         frame_controller.reset_fps_stats()
 

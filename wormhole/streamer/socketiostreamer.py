@@ -71,10 +71,10 @@ class SocketIOStreamerBase(AbstractStreamer):
                     logging.error(f"Error While Generating Frame for SocketIO Stream! {e}")
                     traceback.print_exc()
                     time.sleep(1)
-                    
+
                     # Reset FPS Statistics in case the video works again
                     frame_controller.reset_fps_stats()
-                    
+
                 frame_controller.next_frame()
 
     # Helper function to emit socket information

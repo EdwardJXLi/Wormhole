@@ -19,7 +19,7 @@ class CustomVideo(AbstractVideo):
         max_fps: float,
         frame_generator: Optional[Callable] = None,
         **kwargs  # Any Additional Arguments for AbstractVideo
-    ):        
+    ):
         # Basic Video Properties
         self.frame_generator: Optional[Callable] = frame_generator
 
