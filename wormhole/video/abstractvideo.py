@@ -107,14 +107,3 @@ def render_video(
             break
         frame_controller.next_frame()
     cv2.destroyAllWindows()
-
-# Create an alias for AbstractVideo for a more coherent API
-
-
-class CustomVideo(AbstractVideo):
-    """
-    Create Custom Video Streams
-    """
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
