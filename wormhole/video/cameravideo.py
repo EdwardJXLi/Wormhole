@@ -23,7 +23,7 @@ class CameraVideo(AbstractVideo):
         # Basic Video Properties
         self.cam_id: int = cam_id
 
-        # Open Video File
+        # Open Camera
         self.cap = cv2.VideoCapture(self.cam_id)
         # Set CV2 Settings
         if cv2_config:
@@ -37,7 +37,7 @@ class CameraVideo(AbstractVideo):
         # Initialize Video Object
         super().__init__(width, height, max_fps, **kwargs)
 
-        # Check if Video File Opened
+        # Check if Camera Opened Successfully
         if not self.cap.isOpened():
             raise ValueError("Camera Not Opened! An Error Probably Occurred.")
         # Set up Frame Controller
