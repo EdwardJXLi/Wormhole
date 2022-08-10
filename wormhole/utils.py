@@ -68,6 +68,8 @@ def draw_multiline_text(
     if type(text) is str:
         text = [text]
 
+    # Disable this feature for now.
+    '''
     # Determine Information On Rendered Text
     CHAR_WIDTH, CHAR_HEIGHT = 30, 30
     FONT_SIZE = 1
@@ -83,6 +85,12 @@ def draw_multiline_text(
         CHAR_WIDTH, CHAR_HEIGHT = 15, 15
         FONT_SIZE = 0.5
         FONT_STROKE = 1
+    '''
+    
+    # Always use zoomed out mode
+    CHAR_HEIGHT = 15
+    FONT_SIZE = 0.5
+    FONT_STROKE = 1    
 
     # Place the text on the frame
     for i, line in enumerate(text):
