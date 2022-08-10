@@ -229,8 +229,10 @@ def render_debug_info(video):
     """
 
     # Render the fps
+    from wormhole.core import __version__
     video._frame = draw_multiline_text(video._frame, video.width, video.height, [
         f"=== [Debug Information] ===",
+        f"Wormhole Version: {__version__}",
         f">>> Video Information <<<",
         f"Render Source: {type(video).__name__}",
         f"Height: {video.height} | Width: {video.width} | Pixel Size: {video.pixel_size}",
