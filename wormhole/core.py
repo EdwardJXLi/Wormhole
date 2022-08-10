@@ -1,12 +1,6 @@
 __version__ = "development"
 
-# Setup Gevent Monkey Patching
-try:
-    from gevent import monkey
-    monkey.patch_all()
-except ModuleNotFoundError:
-    print("Gevent is not installed. Ignoring Monkey Patch.")
-
+import logging
 import requests
 import threading
 from flask import request
@@ -46,12 +40,18 @@ class Wormhole():
                 ]
             ]
         ] = None,
+        debug: bool = False,
         # Pass All Other Arguments to the Controller
         *args,
         **kwargs
     ):
+        # Set logging if debug
+        if debug:
+            logging.basicConfig(level=logging.DEBUG)
+        logging.info(f"Setting Up Wormhole Server {__version__}")
+
         # Create Controller
-        self.controller = network_controller(self, *args, **kwargs)
+        self.controller = network_controller(self, *args, debug=debug, **kwargs)
 
         # Set Up Streamers
         # List of streamers with the route as they key and the streamer object as the value
@@ -82,6 +82,7 @@ class Wormhole():
             if len(self.supported_protocols) == 0:
                 raise Exception("No supported protocols were passed!")
             self.set_up_advanced_features()
+        logging.debug(f"Supported Protocols: {list(self.supported_protocols.keys())}")
 
         # Set up welcome screen
         if welcome_screen:
@@ -103,6 +104,8 @@ class Wormhole():
     #
 
     def set_up_advanced_features(self):
+        logging.debug("Setting up advanced Wormhole features")
+
         # Set up basic client sync
         def client_sync():
             # Default Response

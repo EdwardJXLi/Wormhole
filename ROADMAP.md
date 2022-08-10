@@ -40,9 +40,9 @@ Of course, this project won't be done in just over a weekend or two. Wormhole's 
     - [X] Dynamic Video Manipulation
     - [X] Video Modifiers
     - [X] Video Subscribers
-- [ ] Error Handling
-    - [ ] Rendered Error Messages
-    - [ ] Logging
+- [X] Error Handling
+    - [X] Rendered Error Messages
+    - [X] Logging
 - [ ] Example Code
 
 ## Generation 2

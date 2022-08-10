@@ -19,15 +19,18 @@ class RawViewer(SocketIOViewerBase):
 
     # Create Handler for Incoming Raw Data Frames
     def raw_image_handler(self, raw):
-        # Sanity Check for Stream Info
-        if len(raw) != self.width * self.height * self.pixel_size:
-            raise Exception(f"Invalid frame size! Expected: {self.width * self.height * self.pixel_size} bytes but received: {raw} bytes!")
+        try:
+            # Sanity Check for Stream Info
+            if len(raw) != self.width * self.height * self.pixel_size:
+                raise Exception(f"Invalid frame size! Expected: {self.width * self.height * self.pixel_size} bytes but received: {raw} bytes!")
 
-        # Convert 1d data array to 3d frame data
-        new_frame = np.ndarray((self.width, self.height, self.pixel_size), np.uint8, raw)
+            # Convert 1d data array to 3d frame data
+            new_frame = np.ndarray((self.width, self.height, self.pixel_size), np.uint8, raw)
 
-        # New Frame!
-        self.set_frame(new_frame)
+            # New Frame!
+            self.set_frame(new_frame)
+        except Exception as e:
+            self.handle_render_error(e, message="Error While Reading/Processing RAW stream!")
 
 
 class RawIMDecodeViewerBase(SocketIOViewerBase):
@@ -45,17 +48,20 @@ class RawIMDecodeViewerBase(SocketIOViewerBase):
 
     # Create Handler for Incoming Raw Data Frames
     def raw_image_handler(self, raw):
-        # Read and decode data
-        np_image = np.fromstring(raw, dtype=np.uint8)  # type: ignore
-        new_frame = cv2.imdecode(np_image, cv2.IMREAD_COLOR)
+        try:
+            # Read and decode data
+            np_image = np.fromstring(raw, dtype=np.uint8)  # type: ignore
+            new_frame = cv2.imdecode(np_image, cv2.IMREAD_COLOR)
 
-        # If sizes does not match, resize frame
-        frame_height, frame_width, _ = new_frame.shape
-        if frame_width != self.width or frame_height != self.height:
-            new_frame = cv2.resize(new_frame, (self.width, self.height))
+            # If sizes does not match, resize frame
+            frame_height, frame_width, _ = new_frame.shape
+            if frame_width != self.width or frame_height != self.height:
+                new_frame = cv2.resize(new_frame, (self.width, self.height))
 
-        # Set the new frame
-        self.set_frame(new_frame)
+            # Set the new frame
+            self.set_frame(new_frame)
+        except Exception as e:
+            self.handle_render_error(e, message="Error While Reading/Processing raw image stream!")
 
 # Proxy classes for each of the supported streaming formats.
 # They all run the exact same thing, but this is here so it fits with the API structure

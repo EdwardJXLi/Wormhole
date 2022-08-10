@@ -1,10 +1,9 @@
-from wormhole.utils import FrameController
 from wormhole.viewer import AbstractViewer
 
 import cv2
 import math
+import logging
 import numpy as np
-import traceback
 import urllib.request
 from threading import Thread
 
@@ -44,35 +43,33 @@ class MJPEGViewer(AbstractViewer):
     def video_decoder(self):
         # Start Video Loop
         while True:
-            # Read Frame
-            ret, frame = self.cap.read()
-            # Check if Frame is Valid
-            if not ret:
-                if self.auto_reconnect:
-                    retry_fc = FrameController(1)
-                    while True:
-                        self.cap = cv2.VideoCapture(self.url)
-                        if not self.cap.isOpened():
-                            print("Failed to connect to stream... Retrying in 1 second...")
-                            retry_fc.next_frame()
-                        else:
-                            print("Stream Reconnected!")
-                            # Reset fps stats for video controller
-                            self.frame_controller.reset_fps_stats()
-                            break
-                    continue
-                else:
-                    self.set_blank_frame()
+            try:
+                # Read Frame
+                ret, frame = self.cap.read()
+                # Check if Frame is Valid
+                if not ret:
+                    if self.auto_reconnect:
+                        while True:
+                            self.cap = cv2.VideoCapture(self.url)
+                            if not self.cap.isOpened():
+                                self.handle_render_error(Exception("Failed to connect to stream... Retrying in 1 second..."), message="Error While Connecting To Stream")
+                            else:
+                                logging.info("Successfully reconnected to stream!")
+                                break
+                    else:
+                        self.set_blank_frame()
 
-            # If sizes does not match, resize frame
-            frame_width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-            frame_height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-            if frame_width != self.width or frame_height != self.height:
-                frame = cv2.resize(frame, (self.width, self.height))
+                # If sizes does not match, resize frame
+                frame_width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+                frame_height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+                if frame_width != self.width or frame_height != self.height:
+                    frame = cv2.resize(frame, (self.width, self.height))
 
-            # Set Frame
-            self.set_frame(frame)
-            self.frame_controller.next_frame()
+                # Set Frame
+                self.set_frame(frame)
+                self.frame_controller.next_frame()
+            except Exception as e:
+                self.handle_render_error(e, message="Error While Processing/Opening Motion JPEG stream!")
 
 
 class BufferedMJPEGViewer(AbstractViewer):
@@ -138,8 +135,4 @@ class BufferedMJPEGViewer(AbstractViewer):
 
             # Catch any errors that may occur in the video decoder
             except Exception as e:
-                if self.auto_reconnect:
-                    print(f"Open Stream Error: {e}")
-                    traceback.print_exc()
-                else:
-                    self.set_blank_frame()
+                self.handle_render_error(e, message="Error While Processing/Opening Motion JPEG stream!")

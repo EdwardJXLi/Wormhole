@@ -1,3 +1,4 @@
+import logging
 from flask import Flask
 from flask_socketio import SocketIO
 from flask_cors import CORS
@@ -53,6 +54,8 @@ class FlaskController(AbstractController):
         self.debug = debug
         self.server_args = args
         self.server_kwargs = kwargs
+        logging.debug(f"Initializing Flask Server on {host}:{port}")
+        logging.debug(f"Flask Arguments: {args}, {kwargs}")
 
         # Set Flask Config Vars
         for k, v in flask_config.items():
@@ -65,11 +68,6 @@ class FlaskController(AbstractController):
         if cors:
             CORS(self.app)
 
-        # Set logging if debug
-        if self.debug:
-            import logging
-            logging.basicConfig(level=logging.DEBUG)
-
         # Monkey Patch _is_setup_finished so that dynamic route additions are allowed
         self.app._is_setup_finished = lambda: False
 
@@ -77,18 +75,20 @@ class FlaskController(AbstractController):
         return self.app
 
     def add_route(self, route: str, handler: Callable, *args, strict_url: bool = True, **kwargs):
+        logging.debug(f"Adding Route {route} with handler {handler}")
         # Validate Route
         if not route.startswith('/'):
             raise ValueError("Route must start with '/'")
         if route in self.wormhole.routes:
             raise ValueError(f"Route {route} already exists")
         if self.wormhole.advanced_features and strict_url and route.startswith('/wormhole'):
-            print("Warning: the 'wormhole' keyword in the route is reserved. Using it may cause issues.")
+            logging.warning("The 'wormhole' keyword in the route is reserved. Using it may cause issues.")
 
         # Hot-add handler for route
         self.app.add_url_rule(route, endpoint=str(uuid4()), view_func=handler, *args, **kwargs)
 
     def add_message_handler(self, message: str, handler: Callable, namespace: Optional[str] = None, *args, strict_url: bool = True, **kwargs):
+        logging.debug(f"Adding SocketIO Message Handler for Message {message} on namespace {namespace} with handler {handler}")
         # Validate Namespace
         if namespace:
             if not namespace.startswith('/'):
@@ -96,13 +96,14 @@ class FlaskController(AbstractController):
             if namespace in self.wormhole.routes:
                 raise ValueError(f"Namespace {namespace} already exists")
             if self.wormhole.advanced_features and strict_url and namespace.startswith('/wormhole'):
-                print("Warning: the 'wormhole' keyword in the namespace is reserved. Using it may cause issues.")
+                logging.warning("The 'wormhole' keyword in the namespace is reserved. Using it may cause issues.")
 
         # Hot-add handler for socketio message
         self.socketio.on(message, namespace=namespace, *args, **kwargs)(handler)
         # Warning: a little cursed :/
 
     def start_server(self, *args, **kwargs):
+        logging.info(f"Starting Flask Server on {self.host}:{self.port}")
         self.socketio.run(
             self.app,
             log_output=self.debug,

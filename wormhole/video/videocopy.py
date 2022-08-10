@@ -1,4 +1,3 @@
-from wormhole.utils import FrameController
 from wormhole.video import AbstractVideo
 
 import cv2
@@ -14,7 +13,7 @@ class SoftCopy(AbstractVideo):
         self,
         original: AbstractVideo,
         **kwargs  # Any Additional Arguments for AbstractVideo
-    ):
+    ):        
         # Initialize Video Object with the original parameters
         super().__init__(original.width, original.height, original.max_fps, **kwargs)
 
@@ -37,7 +36,7 @@ class HardCopy(AbstractVideo):
         height: int,
         max_fps: float = 30,
         **kwargs  # Any Additional Arguments for AbstractVideo
-    ):
+    ):        
         # Initialize Video Object with the NEW parameters
         super().__init__(width, height, max_fps, **kwargs)
         self.original = original
@@ -49,13 +48,16 @@ class HardCopy(AbstractVideo):
     def video_loop(self):
         # Start Video Loop
         while True:
-            # Get the new video data
-            new_frame = self.original.get_frame()
+            try:
+                # Get the new video data
+                new_frame = self.original.get_frame()
 
-            # If sizes does not match, resize frame
-            if self.original.width != self.width or self.original.height != self.height:
-                new_frame = cv2.resize(new_frame, (self.width, self.height))
+                # If sizes does not match, resize frame
+                if self.original.width != self.width or self.original.height != self.height:
+                    new_frame = cv2.resize(new_frame, (self.width, self.height))
 
-            # Set Frame Size
-            self.set_frame(new_frame)
-            self.frame_controller.next_frame()
+                # Set Frame Size
+                self.set_frame(new_frame)
+                self.frame_controller.next_frame()
+            except Exception as e:
+                self.handle_render_error(e, message="Error While Reading Video Copy!")

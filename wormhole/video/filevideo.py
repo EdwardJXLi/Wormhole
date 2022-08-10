@@ -20,7 +20,7 @@ class FileVideo(AbstractVideo):
         repeat: bool = True,
         cv2_config: Optional[list[tuple[Any, Any]]] = None,
         **kwargs  # Any Additional Arguments for AbstractVideo
-    ):
+    ):        
         # Basic Video Properties
         self.filename: str = filename
         # Optional Video Properties
@@ -53,22 +53,25 @@ class FileVideo(AbstractVideo):
     def video_loop(self):
         # Start Video Loop
         while True:
-            # Read Frame
-            ret, frame = self.cap.read()
-            # Check if Frame is Valid
-            if not ret:
-                if self.repeat:
-                    self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
-                else:
-                    self.set_blank_frame()
-                continue
+            try:
+                # Read Frame
+                ret, frame = self.cap.read()
+                # Check if Frame is Valid
+                if not ret:
+                    if self.repeat:
+                        self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+                    else:
+                        self.set_blank_frame()
+                    continue
 
-            # If sizes does not match, resize frame
-            frame_width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-            frame_height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-            if frame_width != self.width or frame_height != self.height:
-                frame = cv2.resize(frame, (self.width, self.height))
+                # If sizes does not match, resize frame
+                frame_width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+                frame_height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+                if frame_width != self.width or frame_height != self.height:
+                    frame = cv2.resize(frame, (self.width, self.height))
 
-            # Set Frame
-            self.set_frame(frame)
-            self.frame_controller.next_frame()
+                # Set Frame
+                self.set_frame(frame)
+                self.frame_controller.next_frame()
+            except Exception as e:
+                self.handle_render_error(e, message="Error While Rendering Video File!")

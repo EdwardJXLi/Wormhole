@@ -1,7 +1,9 @@
 from wormhole.utils import FrameController
 from wormhole.streamer import AbstractStreamer
 
+import logging
 import time
+import traceback
 from flask_socketio import emit, join_room
 from threading import Thread
 from typing import Any, Callable
@@ -62,8 +64,17 @@ class SocketIOStreamerBase(AbstractStreamer):
 
                 # Run Stream Publisher Function
                 # This should process any video encoding work and publishing logic
-                self.frame_publisher_hotloop()
-
+                try:
+                    self.frame_publisher_hotloop()
+                except Exception as e:
+                    # Print Error To User
+                    logging.error(f"Error While Generating Frame for SocketIO Stream! {e}")
+                    traceback.print_exc()
+                    time.sleep(1)
+                    
+                    # Reset FPS Statistics in case the video works again
+                    frame_controller.reset_fps_stats()
+                    
                 frame_controller.next_frame()
 
     # Helper function to emit socket information

@@ -1,8 +1,10 @@
 import cv2
+import logging
 import numpy as np
+import time
 import traceback
 from typing import Callable, Optional
-from wormhole.utils import FrameController
+from wormhole.utils import blank_frame_color, draw_text, FrameController
 
 
 class AbstractVideo():
@@ -55,7 +57,8 @@ class AbstractVideo():
         for modifier in self.frame_modifiers:
             try:
                 modifier(self)
-            except Exception as e:
+            except Exception:
+                logging.error(f"Error While Running Frame Modifier {modifier}")
                 traceback.print_exc()
 
     # Call all frame subscribers
@@ -64,6 +67,7 @@ class AbstractVideo():
             try:
                 subscriber(self)
             except Exception as e:
+                logging.error(f"Error While Running Frame Subscriber {subscriber}")
                 traceback.print_exc()
 
     # Get the current frame
@@ -86,6 +90,29 @@ class AbstractVideo():
     def set_blank_frame(self):
         new_frame = np.zeros((self.width, self.height, self.pixel_size), np.uint8)
         self.set_frame(new_frame)
+        
+    def handle_render_error(self, error, message="Error While Generating Next Frame!"):
+        try:
+            # Print error to user
+            logging.error(f"Error While Rendering Frame: {error}")
+            traceback.print_exc()
+            
+            # Render an error video frame
+            error_frame = blank_frame_color(self.width, self.height, (0, 0, 0))
+            error_frame = draw_text(error_frame, "ERROR!", (10, 60), font_color=(0, 0, 255), font_size=2, font_stroke=4)
+            error_frame = draw_text(error_frame, message, (10, 100))
+            error_frame = draw_text(error_frame, f"Error: {error}", (10, 130), font_size=0.5, font_stroke=1)
+            self.finished_frame = error_frame
+        
+            # Sleep one second so its not hotlooping like crazy
+            time.sleep(1)
+            
+            # Reset FPS statistics in case the video works again
+            self.frame_controller.reset_fps_stats()
+        except Exception as e:
+            print(f"Error while processing error frame!!!!! {e}")
+            print(f"Something is seriously wrong with this video object or this instance of Wormhole!")
+        
 
 
 def render_video(

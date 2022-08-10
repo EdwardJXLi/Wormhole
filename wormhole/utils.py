@@ -15,7 +15,7 @@ def blank_frame_color(width: int, height: int, color: tuple, pixel_size: int = 3
     Set the current frame to a blank frame with a given color
     """
     
-    new_frame = np.zeros((width, height, pixel_size), np.uint8)
+    new_frame = np.zeros((height, width, pixel_size), np.uint8)
     new_frame[:, :, :] = color
     return new_frame
 
@@ -25,7 +25,7 @@ def blank_frame_color_rgb(width: int, height: int, r: int, g: int, b: int, pixel
     Set the current frame to a blank frame with a given color
     """
     
-    new_frame = np.zeros((width, height, pixel_size), np.uint8)
+    new_frame = np.zeros((height, width, pixel_size), np.uint8)
     new_frame[:, :, :] = (r, g, b)
     return new_frame
 

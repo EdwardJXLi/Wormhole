@@ -19,7 +19,7 @@ class ImageVideo(AbstractVideo):
         width: Optional[int] = None,
         height: Optional[int] = None,
         **kwargs  # Any Additional Arguments for AbstractVideo
-    ):
+    ):        
         # Basic Video Properties
         self.filename: str = filename
 
@@ -77,6 +77,9 @@ class ImageVideo(AbstractVideo):
     def video_loop(self):
         # Start Video Loop
         while True:
-            # Run render function to generate next frame
-            self.render()
-            self.frame_controller.next_frame()
+            try:
+                # Run render function to generate next frame
+                self.render(reopen_file=True)
+                self.frame_controller.next_frame()
+            except Exception as e:
+                self.handle_render_error(e, message="Error While Rendering Image")
