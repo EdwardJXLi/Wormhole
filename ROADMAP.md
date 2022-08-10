@@ -54,14 +54,23 @@ Of course, this project won't be done in just over a weekend or two. Wormhole's 
 - [ ] Dynamic FPS
     - [X] Server Support
     - [ ] Client Support
-- [ ] Dynamic Python Module Loading instead of static
-- [ ] Sophisticated Video Streaming Functionality
+- [ ] Advanced Protocol Negotiation
+    - [ ] Dynamic Python Module Loading instead of static
+    - [ ] Dynamic Negotiation Depending On What Modules Are Loaded
+    - [X] Use Fallback is one fails
+    - [ ] Multiple Attempts in case of network failure
+- [ ] Advanced Video Rendering Functionality
+    - [ ] Render Video from Streaming Sites
+        - [ ] Youtube
+        - [ ] Vimeo
+        - [ ] Twitch
+- [ ] Advanced Video Streaming Functionality
     - [X] b64 Streams
     - [ ] TurboJpeg Streams
-- [ ] Sophisticated Video Viewing Functionality
+- [ ] Advanced Video Viewing Functionality
     - [X] b64 Streams
     - [ ] TurboJpeg Streams
-- [X] Sophisticated Video Processing
+- [X] Advanced Video Processing
     - [X] Text Rendering
         - [X] FPS Rendering
         - [X] Debug Rendering
