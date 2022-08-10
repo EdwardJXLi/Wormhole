@@ -69,7 +69,7 @@ class FlaskController(AbstractController):
             CORS(self.app)
 
         # Monkey Patch _is_setup_finished so that dynamic route additions are allowed
-        self.app._is_setup_finished = lambda: False
+        self.app._is_setup_finished = lambda: False  # type: ignore
 
     def get_app(self):
         return self.app
