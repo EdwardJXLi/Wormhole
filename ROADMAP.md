@@ -16,8 +16,8 @@ Of course, this project won't be done in just over a weekend or two. Wormhole's 
         - [X] Dynamic SocketIO Handlers
         - [X] Dynamic SocketIO Rooms
     - [X] Proper Framerate Control
-- [ ] Basic Video Rendering Functionality
-    - [ ] Webcam / Cameras
+- [X] Basic Video Rendering Functionality
+    - [X] Webcam / Cameras
     - [X] Video Files
     - [X] Image Files
     - [X] Copies of Videos

@@ -188,15 +188,40 @@ class Wormhole():
     # Simple Aliases For The Different Video Types
     def stream(self, resource: str, *args, **kwargs):
         # Check if stream location is a camera
-        if resource.isnumeric():
+        if str(resource).isnumeric():
             return self.stream_camera(int(resource), *args, **kwargs)
         # Else, assume its a file
         else:
             return self.stream_file(resource, *args, **kwargs)
 
-    def stream_camera(self, camId: int, *args, name: str = "default", protocols: Optional[list[str]] = None, **kwargs):
+    def stream_camera(
+        self,
+        cam_id: int,
+        name: str = "default",
+        protocols: Optional[list[str]] = None,
+        camera_fps: Optional[int] = None,
+        stream_fps: Optional[int] = None,
+        print_camera_fps: bool = False,
+        print_stream_fps: bool = False,
+        **kwargs
+    ):
+        # Separate out kwargs for CameraVideo object or Streamer Object
+        # As CameraVideo is constant, we can hardcode these.
+        camera_video_arg_keys = ["width", "height", "cv2_config", "pixel_size", "frame_modifiers", "frame_subscribers"]
+        camera_video_args = {}
+        streamer_args = {}
+        for key, value in kwargs.items():
+            if key in camera_video_arg_keys:
+                camera_video_args[key] = value
+            else:
+                streamer_args[key] = value
+
         # Initialize Camera Video
-        raise NotImplementedError()
+        from wormhole.video import CameraVideo
+        video = CameraVideo(cam_id, max_fps=camera_fps, print_fps=print_camera_fps, **camera_video_args)
+
+        logging.info("Creating Managed Video Stream From Camera!")
+        self.stream_video(video, name=name, protocols=protocols, fps_override=stream_fps, print_fps=print_stream_fps, **streamer_args)
 
     def stream_file(
         self,
