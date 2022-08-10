@@ -3,6 +3,7 @@ __version__ = "development"
 import logging
 import requests
 import threading
+import traceback
 from flask import request
 from markupsafe import escape
 from threading import Thread
@@ -292,21 +293,26 @@ class Wormhole():
         stream_protocols, stream_width, stream_height, stream_pixel_size, stream_fps = self.sync_stream(hostname, name)
         logging.debug(f"Wormhole Sync: Stream {name} supports protocols: {stream_protocols} and has args: Width: {stream_width}, Height: {stream_height}, Pixel Size: {stream_pixel_size}, FPS: {stream_fps}!")
 
-        # Find best protocol to use for stream
+        # Try each supported protocol
         for proto in stream_protocols:
-            if proto in self.supported_protocols.keys():
-                best_protocol = proto
-                break
+            logging.debug(f"Attempting to view stream with protocol {proto}")
+
+            try:
+                # Get the viewer class
+                _, viewer = self.supported_protocols[proto]
+
+                # Initialize the viewer
+                logging.debug(f"Wormhole Sync: Attempting to Initializing Viewer with {proto}!")
+                viewer_obj = viewer(f"{hostname}/wormhole/stream/{name}/{proto.lower()}", stream_width, stream_height, max_fps=stream_fps, pixel_size=stream_pixel_size)
+                
+                logging.debug(f"Success! Using {proto} for streaming")
+                return viewer_obj
+            except Exception as e:
+                logging.error(f"Failed to initialize stream with protocol {proto}! Error: {e}")
+                traceback.print_exc()
+                logging.error(f"Attempting Fallback!")
         else:
-            raise Exception(f"No Supported Protocols Found For Stream {name}! This error occurred after sync, which should never happen!")
-        logging.debug(f"Wormhole Sync: Decided Best Protocol Is {best_protocol}!")
-
-        # Get the viewer class
-        _, viewer = self.supported_protocols[best_protocol]
-
-        # Initialize the viewer
-        logging.debug(f"Wormhole Sync: Initializing Viewer with {best_protocol}!")
-        return viewer(f"{hostname}/wormhole/stream/{name}/{best_protocol.lower()}", stream_width, stream_height, max_fps=stream_fps, pixel_size=stream_pixel_size)
+            raise Exception(f"No Supported Protocols Was Successful for Stream {name}!")
 
     def sync_wormhole(self, hostname: str):
         logging.debug(f"Wormhole Sync: Syncing With Wormhole Server {hostname}!")
