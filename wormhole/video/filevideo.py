@@ -12,7 +12,8 @@ class FileVideo(AbstractVideo):
     """
 
     def __init__(
-        self, filename: str,
+        self, 
+        filename: str,
         max_fps: Optional[float] = 30,
         width: Optional[int] = None,
         height: Optional[int] = None,
