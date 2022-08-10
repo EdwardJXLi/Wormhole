@@ -286,6 +286,9 @@ class FrameController():
 
     def __init__(self, fps: float, print_fps: bool = False, sleep_func=None, fps_window_delta: float = 5.0):
         # --- Core Functionality ---
+        if fps <= 0.0:
+            raise ValueError("FPS must be greater than 0!")
+
         self.target_fps: float = fps
         self.last_frame: float = time.time()
         self.frame_time: float = 0.0
