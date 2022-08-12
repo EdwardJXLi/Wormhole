@@ -1,4 +1,8 @@
-![Wormhole Logo](https://github.com/RadioactiveHydra/Wormhole/raw/main/wormhole/assets/logo.svg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/RadioactiveHydra/Wormhole/raw/main/wormhole/assets/logo_white.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://github.com/RadioactiveHydra/Wormhole/raw/main/wormhole/assets/logo.svg">
+  <img alt="Wormhole Logo" src="https://github.com/RadioactiveHydra/Wormhole/raw/main/wormhole/assets/logo.svg">
+</picture>
 # Wormhole: Realtime Streaming Engine
 Wormhole is a Simple and Hackable Realtime Video Streaming Engine for Prototypes and Projects Alike! Stream Camera Feeds, Video Files, or Machine Learning Output from Anything like a Raspberry Pi to a Fully Fledged Development Environment!
 
@@ -62,4 +66,8 @@ After rewriting the same video streaming codebase for the 5th hackathon/project 
 Wormhole's source code follows all **PEP8** guidelines (except E501 for long lines). Also, most function arguments are **typed** so that the API is coherent and easy-to-use. Finally, Wormhole aims to keep compatibility for **Python versions 3.8 and beyond**. To contribute to Wormhole, you can either fork the project on GitHub or submit a pull request. If you have any questions or suggestions, feel free to join the discord server here: [https://discord.gg/9QF2bPc](https://discord.gg/9QF2bPc).
 
 ## Powered By Wormhole Assets
-![Wormhole Logo](https://github.com/RadioactiveHydra/Wormhole/raw/main/wormhole/assets/poweredby.svg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/RadioactiveHydra/Wormhole/raw/main/wormhole/assets/poweredby_white.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://github.com/RadioactiveHydra/Wormhole/raw/main/wormhole/assets/poweredby.svg">
+  <img alt="Powered By Wormhole" src="https://github.com/RadioactiveHydra/Wormhole/raw/main/wormhole/assets/poweredby.svg">
+</picture>
