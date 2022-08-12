@@ -8,7 +8,7 @@ Wormhole was originally a simple weekend project to consolidate everything I nee
 
 Of course, this project won't be done in just over a weekend or two. Wormhole's development will most likely last for years, adding incremental features whenever I feel it's missing. If you would like to help with this journey, feel free to submit a PR anytime. Nevertheless, the goals shown below are just preliminary plans, so if you feel like there is a feature that is missing, feel free to edit this list!
 
-## Generation 1
+## ~~ Generation 1 ~~ DONE!
 - [X] Initial Setup
     - [X] Flask Server Setup
         - [X] Dynamic Flask Routes
@@ -43,7 +43,7 @@ Of course, this project won't be done in just over a weekend or two. Wormhole's 
 - [X] Error Handling
     - [X] Rendered Error Messages
     - [X] Logging
-- [ ] Example Code
+- [X] Example Code
 
 ## Generation 2
 - [ ] Using a Python profiler to iron out performance issues
