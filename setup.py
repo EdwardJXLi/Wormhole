@@ -1,9 +1,4 @@
 import setuptools
-# Extremely hacky way to get the version to load...
-try:
-    from wormhole.version import __version__
-except ImportError as e:
-    from wormhole.version import __version__
 
 # Setup the markdown
 readme_markdown = ""
@@ -25,7 +20,7 @@ for l in open("requirements.txt"):
 
 setuptools.setup(
     name='wormhole-video',
-    version=__version__,
+    version="0.1.5",  # Temporary as I work out how to upload to pypi
     description='Simple and Hackable Realtime Video Streaming Engine',
     author='Edward Li',
     url='https://github.com/RadioactiveHydra/Wormhole/',
