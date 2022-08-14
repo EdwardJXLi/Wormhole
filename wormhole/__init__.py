@@ -1,3 +1,5 @@
+from wormhole.version import __version__
+
 # Setup Gevent Monkey Patching
 try:
     from gevent import monkey
