@@ -24,4 +24,9 @@ setuptools.setup(
     packages=['wormhole', 'wormhole.streamer', 'wormhole.video', 'wormhole.viewer'],
     long_description=readme_markdown,
     long_description_content_type='text/markdown',
+    project_urls={
+        "Bug Reports": f"https://github.com/RadioactiveHydra/Wormhole/issues",
+        "Demo": "https://demo.wormhole.hydranet.dev/",
+        "Discord": "https://discord.gg/9QF2bPc",
+    }
 )
