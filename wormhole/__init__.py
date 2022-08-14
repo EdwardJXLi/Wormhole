@@ -1,3 +1,5 @@
+__version__ = "1.0.3"
+
 # Setup Gevent Monkey Patching
 try:
     from gevent import monkey

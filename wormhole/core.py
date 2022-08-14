@@ -1,5 +1,3 @@
-__version__ = "development"
-
 import logging
 import requests
 import threading
@@ -9,6 +7,7 @@ from markupsafe import escape
 from threading import Thread
 from typing import Optional, Type
 
+from wormhole import __version__
 from wormhole.controller import AbstractController, FlaskController
 from wormhole.streamer import AbstractStreamer
 from wormhole.viewer import AbstractViewer

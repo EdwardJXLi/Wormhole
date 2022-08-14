@@ -1,6 +1,12 @@
+# Ignore basic python stuff
 __pycache__
 venv
 
 # Personal testing folder I use
 wormhole_testing
 ignore_*
+
+# Ignore build files
+build
+dist
+*.egg-info
