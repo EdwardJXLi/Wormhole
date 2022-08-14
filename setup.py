@@ -1,5 +1,5 @@
 import setuptools
-from wormhole import __version__
+from wormhole.version import __version__
 
 readme_markdown = ""
 ignore = False
