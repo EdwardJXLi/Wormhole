@@ -46,6 +46,14 @@ class FlaskController(AbstractController):
         *args,
         **kwargs
     ):
+        # Check if script is being run from an interactive shell
+        # If it is, return warning / error message
+        import __main__ as main
+        if not hasattr(main, '__file__'):
+            logging.warning("Wormhole does not work in an interactive shell!")
+            logging.warning("Please run your script from a file.")
+            logging.warning("This is a known issue that is WIP.")
+            
         # Create The Flask Server
         self.wormhole = wormhole
         self.app = Flask(__name__)

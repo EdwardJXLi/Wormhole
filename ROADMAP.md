@@ -77,6 +77,7 @@ Of course, this project won't be done in just over a weekend or two. Wormhole's 
     - [X] Image Rendering
         - [X] Transparency Rendering
         - [X] Wormhole Watermark
+- [ ] Interactive Shell Fix / Support
 
 ## Generation 3
 - [ ] Ability to start and stop streams
