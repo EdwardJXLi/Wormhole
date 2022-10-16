@@ -1,4 +1,3 @@
-import cv2
 import logging
 import numpy as np
 import time
@@ -112,24 +111,4 @@ class AbstractVideo():
         except Exception as e:
             print(f"Error while processing error frame!!!!! {e}")
             print(f"Something is seriously wrong with this video object or this instance of Wormhole!")
-
-
-def render_video(
-    video: AbstractVideo,
-    width: Optional[int] = None,
-    height: Optional[int] = None,
-    max_fps: Optional[float] = None,
-    print_fps: bool = False,
-    window_name="Video Preview"
-):
-    width = width or video.width
-    height = height or video.height
-    max_fps = max_fps or video.max_fps
-    frame_controller = FrameController(max_fps, print_fps=print_fps)
-    while True:
-        frame = video.get_frame()
-        cv2.imshow(window_name, cv2.resize(frame, (width, height)))
-        if cv2.waitKey(1) == ord('q'):
-            break
-        frame_controller.next_frame()
-    cv2.destroyAllWindows()
+            

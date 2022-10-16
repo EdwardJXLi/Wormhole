@@ -43,6 +43,15 @@ Of course, this project won't be done in just over a weekend or two. Wormhole's 
 - [X] Error Handling
     - [X] Rendered Error Messages
     - [X] Logging
+- [X] Writing Video to File
+    - [X] Multi Codec Support
+    - [ ] .MP4 Support
+    - [ ] .MOV Support
+    - [ ] .AVI Support
+    - [ ] .MKV Support
+    - [ ] .OVG Support
+    - [ ] .WEBM Support
+    - [ ] Threaded Support
 - [X] Example Code
 
 ## Generation 2
@@ -77,6 +86,9 @@ Of course, this project won't be done in just over a weekend or two. Wormhole's 
     - [X] Image Rendering
         - [X] Transparency Rendering
         - [X] Wormhole Watermark
+- [ ] Advanced Video File Writing
+    - [ ] Chunking (new file every x minutes)
+    - [ ] Autodetect Video Capabilities
 - [ ] Interactive Shell Fix / Support
 
 ## Generation 3
