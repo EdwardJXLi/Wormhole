@@ -1,8 +1,9 @@
 from wormhole.utils import FrameController
 from wormhole.video import AbstractVideo
 
-import cv2
+from pathlib import Path
 from typing import Optional
+import cv2
 import logging
 
 
@@ -26,8 +27,22 @@ def write_video(
     elif isinstance(encoding, tuple) or isinstance(encoding, str):
         fourcc = cv2.VideoWriter_fourcc(*encoding)
     else:
-        logging.warning("No encoding format specified. Automatically determining encoding format.")
-        fourcc = -1
+        # Autodetect File Encoding
+        suffix = Path(filename).suffix
+        if suffix == ".mp4":
+            # NOTE: h264 is not supported everywhere
+            # fourcc = cv2.VideoWriter_fourcc(*"h264")
+            fourcc = cv2.VideoWriter_fourcc(*"MP4V")
+        elif suffix == ".avi":
+            fourcc = cv2.VideoWriter_fourcc(*"XVID")
+        elif suffix == ".webm":
+            # NOTE: VP9 is wayyy to buggy for handling unstable video
+            # fourcc = cv2.VideoWriter_fourcc(*"VP90")
+            fourcc = cv2.VideoWriter_fourcc(*"VP80")
+        else:
+            # TODO: Potentially support more codecs and formats in the future?
+            logging.warning("Unknown File Encoding Format. Using OepnCV Default.")
+            fourcc = -1
     
     # Create File Writer Object
     video_writer = cv2.VideoWriter(filename, fourcc, max_fps, (width, height))
@@ -53,14 +68,3 @@ def write_video(
 
     # This never gets called...
     # video_writer.release()
-
-# Some predefined fourcc codes
-H264_CODEC = cv2.VideoWriter_fourcc('H', '2', '6', '4')
-H265_CODEC = cv2.VideoWriter_fourcc('H', 'E', 'V', 'C')
-MPEG4_CODEC = cv2.VideoWriter_fourcc('M', 'P', '4', 'V')
-XVID_CODEC = cv2.VideoWriter_fourcc('X', 'V', 'I', 'D')
-MJPG_CODEC = cv2.VideoWriter_fourcc('M', 'J', 'P', 'G')
-X264_CODEC = cv2.VideoWriter_fourcc('X', '2', '6', '4')
-VP8_CODEC = cv2.VideoWriter_fourcc('V', 'P', '8', '0')
-VP9_CODEC = cv2.VideoWriter_fourcc('V', 'P', '9', '0')
-AV1_CODEC = cv2.VideoWriter_fourcc('A', 'V', '0', '1')

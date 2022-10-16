@@ -45,12 +45,9 @@ Of course, this project won't be done in just over a weekend or two. Wormhole's 
     - [X] Logging
 - [X] Writing Video to File
     - [X] Multi Codec Support
-    - [ ] .MP4 Support
-    - [ ] .MOV Support
-    - [ ] .AVI Support
-    - [ ] .MKV Support
-    - [ ] .OVG Support
-    - [ ] .WEBM Support
+    - [X] .MP4 Support
+    - [X] .AVI Support
+    - [X] .WEBM Support
     - [ ] Threaded Support
 - [X] Example Code
 
