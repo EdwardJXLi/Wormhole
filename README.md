@@ -8,13 +8,13 @@
 [HTMLElementEnd]: # 
 
 # Wormhole: Realtime Streaming Engine
-Wormhole is a Simple and Hackable Realtime Video Streaming Engine for Prototypes and Projects Alike! Stream Camera Feeds, Video Files, or Machine Learning Output from Anything like a Raspberry Pi to a Fully Fledged Development Environment!
+Wormhole is a simple and hackable realtime video streaming engine for prototypes and projects alike! Stream amera feeds, video files, or machine learning output from anything like a Raspberry Pi to a fully fledged development environment!
 
 
 ![wormhole_screenshot_spring](https://user-images.githubusercontent.com/20020059/184041754-5ee78d89-6796-49b8-87b7-13792c301d83.jpg)
 
 ## Features:
-- Multithreaded Flask & SocketIO Backend
+- Multithreaded Flask & SocketIO backend
 - Camera and Video File Streaming!
 - Fast and scalable Motion JPEG and PNG streaming
 - Dynamic protocol negotiation between Wormhole servers and clients
@@ -76,4 +76,5 @@ Wormhole's source code follows all **PEP8** guidelines (except E501 for long lin
   <source media="(prefers-color-scheme: light)" srcset="https://github.com/RadioactiveHydra/Wormhole/raw/main/wormhole/assets/poweredby.svg">
   <img alt="Powered By Wormhole" src="https://github.com/RadioactiveHydra/Wormhole/raw/main/wormhole/assets/poweredby.svg">
 </picture>
+
 [HTMLElementEnd]: # 
