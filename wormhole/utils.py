@@ -217,7 +217,7 @@ def render_fraps_fps(video):
     """
 
     # Get the fps
-    fps = str(int(min(video.frame_controller.average_fps, 99999)))  # Fixes a small bug with inf fps
+    fps = str(int(min(video.frame_controller.average_fps, 0)))  # Fixes a small bug with inf fps
     # Render the fps
     draw_text(video._frame, f"{fps}", (video.width - len(fps) * 20 - 10, 30), font_color=(0, 0, 0), font_stroke=6)
     draw_text(video._frame, f"{fps}", (video.width - len(fps) * 20 - 10, 30), font_color=(0, 255, 255))
