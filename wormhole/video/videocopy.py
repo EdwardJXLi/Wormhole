@@ -51,7 +51,7 @@ class HardCopy(AbstractVideo):
         while True:
             try:
                 # Get the new video data
-                new_frame = self.original.get_frame()
+                new_frame = np.copy(self.original.get_frame())
 
                 # If sizes does not match, resize frame
                 if self.original.width != self.width or self.original.height != self.height:
