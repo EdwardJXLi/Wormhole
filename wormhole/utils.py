@@ -59,6 +59,7 @@ def draw_multiline_text(
     frame: np.ndarray,
     width: int,
     height: int,
+    position: tuple[int, int],
     text: Union[str, list[str]]
 ):
     """
@@ -88,6 +89,9 @@ def draw_multiline_text(
         FONT_STROKE = 1
     '''
     
+    # Break down position
+    x_offset, y_offset = position
+    
     # Always use zoomed out mode
     CHAR_HEIGHT = 15
     FONT_SIZE = 0.5
@@ -95,7 +99,7 @@ def draw_multiline_text(
 
     # Place the text on the frame
     for i, line in enumerate(text):
-        frame = draw_text(frame, line, (10, (i + 1) * CHAR_HEIGHT), font_size=FONT_SIZE, font_stroke=FONT_STROKE)
+        frame = draw_text(frame, line, (x_offset + 10, y_offset + (i + 1) * CHAR_HEIGHT), font_size=FONT_SIZE, font_stroke=FONT_STROKE)
 
     return frame
 
@@ -191,7 +195,7 @@ def render_watermark(video):
     watermarked_frame = draw_transparent_overlay(video._frame.copy(), wormhole_watermark, (padding, video.height - height - padding), (width, height))
 
     # Render the watermark with the new width and height
-    video._frame = blend_frames(video._frame, watermarked_frame)
+    blend_frames(video._frame, watermarked_frame)
 
 #
 # --- Frame Modifiers to render fps and other statistics ---
@@ -204,7 +208,7 @@ def render_fps(video):
     """
 
     # Render the fps
-    video._frame = draw_text(video._frame, f"FPS: {video.frame_controller.average_fps}", (10, 30))
+    draw_text(video._frame, f"FPS: {video.frame_controller.average_fps}", (10, 30))
 
 
 def render_fraps_fps(video):
@@ -215,8 +219,8 @@ def render_fraps_fps(video):
     # Get the fps
     fps = str(int(min(video.frame_controller.average_fps, 99999)))  # Fixes a small bug with inf fps
     # Render the fps
-    video._frame = draw_text(video._frame, f"{fps}", (video.width - len(fps) * 20 - 10, 30), font_color=(0, 0, 0), font_stroke=6)
-    video._frame = draw_text(video._frame, f"{fps}", (video.width - len(fps) * 20 - 10, 30), font_color=(0, 255, 255))
+    draw_text(video._frame, f"{fps}", (video.width - len(fps) * 20 - 10, 30), font_color=(0, 0, 0), font_stroke=6)
+    draw_text(video._frame, f"{fps}", (video.width - len(fps) * 20 - 10, 30), font_color=(0, 255, 255))
 
 
 def render_full_fps(video):
@@ -225,7 +229,7 @@ def render_full_fps(video):
     """
 
     # Render the fps
-    video._frame = draw_multiline_text(video._frame, video.width, video.height, [
+    draw_multiline_text(video._frame, video.width, video.height, (0, 0), [
         f"Frame Time: {video.frame_controller.frame_time * 1000:.2f} ms",
         f"Instantaneous FPS: {video.frame_controller.instantaneous_fps:.2f}",
         f"FPS over {video.frame_controller.fps_window_delta:.1f} Seconds: {video.frame_controller.fps_window:.2f}",
@@ -240,7 +244,7 @@ def render_debug_info(video):
 
     # Render the fps
     from wormhole.version import __version__
-    video._frame = draw_multiline_text(video._frame, video.width, video.height, [
+    draw_multiline_text(video._frame, video.width, video.height, (0, 0), [
         f"=== [Debug Information] ===",
         f"Wormhole Version: {__version__}",
         f">>> Video Information <<<",
@@ -274,8 +278,8 @@ def grayscale_filter(video):
     Makes video black and white
     """
 
-    video._frame = cv2.cvtColor(video._frame, cv2.COLOR_BGR2GRAY)
-    video._frame = cv2.cvtColor(video._frame, cv2.COLOR_GRAY2BGR)
+    cv2.cvtColor(video._frame, cv2.COLOR_BGR2GRAY)
+    cv2.cvtColor(video._frame, cv2.COLOR_GRAY2BGR)
 
 
 def inverse_filter(video):
@@ -283,7 +287,7 @@ def inverse_filter(video):
     Inverts all colors in the video
     """
 
-    video._frame = cv2.bitwise_not(video._frame)
+    cv2.bitwise_not(video._frame)
 
 
 #
