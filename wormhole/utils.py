@@ -2,6 +2,7 @@ import cv2
 import math
 import numpy as np
 import time
+from pathlib import Path
 from typing import Union
 
 
@@ -159,7 +160,8 @@ def render_watermark(video):
     wormhole_watermark = globals().get("wormhole_watermark")
     if wormhole_watermark is None:
         # Load the image
-        wormhole_watermark = cv2.imread("wormhole/assets/poweredby_white.png", -1)
+        BASE = Path(__file__).parent
+        wormhole_watermark = cv2.imread(str(Path(BASE, "assets", "poweredby_white.png")), -1)
 
         # Cache the image
         globals()["wormhole_watermark"] = wormhole_watermark
