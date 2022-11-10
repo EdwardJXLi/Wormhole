@@ -2,6 +2,7 @@ from wormhole.utils import FrameController
 from wormhole.video import AbstractVideo
 
 from pathlib import Path
+from threading import Thread
 from typing import Optional
 import cv2
 import logging
@@ -68,3 +69,12 @@ def write_video(
 
     # This never gets called...
     # video_writer.release()
+
+
+# TODO: This might cause data loss if the program is closed during video write. Ill look into it later.
+def threaded_video_writer(*args, **kwargs):
+    # Create a new video writer thread
+    video_writer_thread = Thread(target=write_video, args=args, kwargs=kwargs)
+    video_writer_thread.daemon = True
+    video_writer_thread.start()
+    return video_writer_thread

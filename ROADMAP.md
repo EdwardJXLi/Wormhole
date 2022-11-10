@@ -48,7 +48,7 @@ Of course, this project won't be done in just over a weekend or two. Wormhole's 
     - [X] .MP4 Support
     - [X] .AVI Support
     - [X] .WEBM Support
-    - [ ] Threaded Support
+    - [X] Threaded Support
 - [X] Example Code
 
 ## Generation 2
@@ -86,6 +86,7 @@ Of course, this project won't be done in just over a weekend or two. Wormhole's 
 - [ ] Advanced Video File Writing
     - [ ] Chunking (new file every x minutes)
     - [ ] Autodetect Video Capabilities
+    - [ ] Controllable Video Thread
 - [ ] Interactive Shell Fix / Support
 
 ## Generation 3
