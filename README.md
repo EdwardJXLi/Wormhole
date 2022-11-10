@@ -13,6 +13,8 @@ Wormhole is a simple and hackable realtime video streaming engine for prototypes
 
 ![wormhole_screenshot_spring](https://user-images.githubusercontent.com/20020059/184041754-5ee78d89-6796-49b8-87b7-13792c301d83.jpg)
 
+> ## Try Out A Live Demo Here: https://demo.wormhole.hydranet.dev/
+
 ## Features:
 - Multithreaded Flask & SocketIO backend
 - Camera and Video File Streaming!
@@ -61,7 +63,7 @@ render_video(video)
 ```
 The video stream is also available online if you go to `http://localhost:5000/wormhole/stream/default/mjpeg` in your browser.
 
-Of course, you may want to do more than what Wormhole offers by default. For that, you can read up on the ~~Advanced Usage Guide~~. (Still WIP)
+Of course, you may want to do more than what Wormhole offers by default. For that, you can check out some examples in the `examples` folder or in the [Official Wormhole Example Server](https://github.com/EdwardJXLi/WormholeExampleServer)
 
 ## Why develop Wormhole?
 After rewriting the same video streaming codebase for the 5th hackathon/project in a row ([Ref.1](https://github.com/CrowdEye/crowdeye-ai-engine/blob/bbb1591cbc121babef8de973ba7210fe358683ba/ai.py#L57)) ([Ref.2](https://github.com/MaskPass-BellCSclub/ai-server/blob/1d9acdc36677fa433a0f3db2c2d297fe023c0d70/main.py#L199)) ([Reg.3](https://github.com/Hive-HQ/Hive-HQ-backend/blob/27f88a2a74da9465f8fc1ceb89fd0344d696a8cc/main.py#L526)) (& More!), I thought it was time to sit down and write a universal streaming library for all my needs. Shopping around online did not yield any projects that fit my requirements, so I decided to build my own. Wormhole is designed so that it can not only be deployed in ~~minutes~~ **seconds**, but it is also flexible enough to do everything I need in a fully-fledged data streaming library. 

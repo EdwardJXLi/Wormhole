@@ -1,5 +1,5 @@
 #
-# == Wormhole Example Stream ==
+# == Wormhole Example Webcam ==
 # 
 # This example shows how to use the Wormhole library to stream a webcam.
 #
