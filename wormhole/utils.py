@@ -93,7 +93,7 @@ def draw_multiline_text(
     x_offset, y_offset = position
     
     # Always use zoomed out mode
-    CHAR_HEIGHT = 15
+    CHAR_HEIGHT = 18
     FONT_SIZE = 0.5
     FONT_STROKE = 1    
 

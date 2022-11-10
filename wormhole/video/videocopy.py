@@ -1,6 +1,7 @@
 from wormhole.video import AbstractVideo
 
 import cv2
+import numpy as np
 from threading import Thread
 
 
@@ -19,7 +20,7 @@ class SoftCopy(AbstractVideo):
 
         # Create a subscriber for the other video stream
         def video_update_subscriber(video):
-            self.set_frame(video.get_frame())
+            self.set_frame(np.copy(video.get_frame()))
             self.frame_controller.next_frame()
         original.add_frame_subscriber(video_update_subscriber)
 
