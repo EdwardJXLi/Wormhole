@@ -19,8 +19,8 @@ for l in open("requirements.txt"):
     requirements.append(l.strip())
 
 setuptools.setup(
-    name='wormhole-video',
-    version="0.1.5",  # Temporary as I work out how to upload to pypi
+    name='wormhole',
+    version="0.1.0",  # Temporary as I work out how to upload to pypi
     description='Simple and Hackable Realtime Video Streaming Engine',
     author='Edward Li',
     url='https://github.com/RadioactiveHydra/Wormhole/',
