@@ -104,6 +104,27 @@ def draw_multiline_text(
     return frame
 
 
+def draw_overlay(frame, overlay_image, position: tuple[int, int], overlay_size: tuple[int, int]):
+    """
+    Draws a solid image ontop of another imge
+    """
+    
+    # Extract the positions
+    pos_x, pos_y = position
+    
+    # Extract the size
+    overlay_width, overlay_height = overlay_size
+
+    # If sizes does not match, resize frame
+    frame_height, frame_width, _ = overlay_image.shape
+    if (frame_width, frame_height) != overlay_size:
+        overlay_image = cv2.resize(overlay_image, overlay_size)
+        
+    frame[pos_y:pos_y+overlay_height, pos_x:pos_x+overlay_width] = overlay_image
+    
+    return frame
+
+
 def draw_transparent_overlay(frame, overlay_image, position: tuple[int, int], overlay_size: tuple[int, int]):
     """
     Overlay an image with a transparency layer onto a frame
