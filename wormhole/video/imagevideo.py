@@ -4,7 +4,7 @@ from wormhole.video import AbstractVideo
 import cv2
 import math
 from threading import Thread
-from typing import Any, Optional
+from typing import Optional
 
 
 class ImageVideo(AbstractVideo):

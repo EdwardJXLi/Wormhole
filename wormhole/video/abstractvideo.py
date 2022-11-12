@@ -2,7 +2,7 @@ import logging
 import numpy as np
 import time
 import traceback
-from typing import Callable, Optional
+from typing import Callable
 from wormhole.utils import blank_frame_color, draw_text, FrameController
 
 
