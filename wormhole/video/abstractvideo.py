@@ -56,9 +56,14 @@ class AbstractVideo():
         for modifier in self.frame_modifiers:
             try:
                 modifier(self)
-            except Exception:
+            except Exception as error:
                 logging.error(f"Error While Running Frame Modifier {modifier}")
                 traceback.print_exc()
+                
+                # Render error to video frame
+                draw_text(self._frame, "ERROR!", (10, 60), font_color=(0, 0, 255), font_size=2, font_stroke=4)
+                draw_text(self._frame, f"Error While Running Frame Modifier {modifier}!", (10, 100))
+                draw_text(self._frame, f"Error: {error}", (10, 130), font_size=0.5, font_stroke=1)
 
     # Call all frame subscribers
     def call_frame_subscribers(self):
