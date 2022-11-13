@@ -313,7 +313,7 @@ class Wormhole():
         # Sync Stream Information
         stream_protocols, stream_width, stream_height, stream_pixel_size, stream_fps = self.sync_stream(hostname, name)
         logging.debug(f"Wormhole Sync: Stream {name} supports protocols: {stream_protocols} and has args: Width: {stream_width}, Height: {stream_height}, Pixel Size: {stream_pixel_size}, FPS: {stream_fps}!")
-        
+
         # Do an intersection between stream_protocols and self.supported_protocols
         # to get the list of protocols we can use
         common_protocols = [proto for proto in stream_protocols if proto in self.supported_protocols]

@@ -25,11 +25,11 @@ class CameraVideo(AbstractVideo):
 
         # Open Camera
         self.cap = cv2.VideoCapture(self.cam_id)
-        
+
         # Check if camera open was successful
         if self.cap is None or not self.cap.isOpened():
             raise ValueError(f"Camera Not Opened! Unable to open camera {self.cam_id}")
-        
+
         # Set CV2 Settings
         if cv2_config:
             for key, value in cv2_config:

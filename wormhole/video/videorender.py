@@ -18,7 +18,7 @@ def render_video(
     height = height or video.height
     max_fps = max_fps or video.max_fps
     frame_controller = FrameController(max_fps, print_fps=print_fps)
-    
+
     # Hot loop for video rendering
     while True:
         frame = video.get_frame()
@@ -27,6 +27,6 @@ def render_video(
         if cv2.waitKey(1) == ord('q'):
             break
         frame_controller.next_frame()
-    
+
     # Safely clean all windows
     cv2.destroyAllWindows()

@@ -53,7 +53,7 @@ class FlaskController(AbstractController):
             logging.warning("Wormhole does not work in an interactive shell!")
             logging.warning("Please run your script from a file.")
             logging.warning("This is a known issue that is WIP.")
-            
+
         # Create The Flask Server
         self.wormhole = wormhole
         self.app = Flask(__name__)

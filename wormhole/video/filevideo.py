@@ -26,18 +26,18 @@ class FileVideo(AbstractVideo):
         self.filename: str = filename
         # Optional Video Properties
         self.repeat: bool = repeat
-        
+
         # Check if file exists
         if not Path(self.filename).exists():
             raise Exception(f"File {self.filename} Does Not Exist!")
 
         # Open Video File
         self.cap = cv2.VideoCapture(self.filename)
-        
+
         # Check if video open was successful
         if self.cap is None or not self.cap.isOpened():
             raise ValueError(f"Video Not Opened! Something went wrong!")
-        
+
         # Set CV2 Settings
         if cv2_config:
             for key, value in cv2_config:

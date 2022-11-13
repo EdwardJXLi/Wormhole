@@ -88,14 +88,14 @@ def draw_multiline_text(
         FONT_SIZE = 0.5
         FONT_STROKE = 1
     '''
-    
+
     # Break down position
     x_offset, y_offset = position
-    
+
     # Always use zoomed out mode
     CHAR_HEIGHT = 18
     FONT_SIZE = 0.5
-    FONT_STROKE = 1    
+    FONT_STROKE = 1
 
     # Place the text on the frame
     for i, line in enumerate(text):
@@ -108,10 +108,10 @@ def draw_overlay(frame, overlay_image, position: tuple[int, int], overlay_size: 
     """
     Draws a solid image ontop of another imge
     """
-    
+
     # Extract the positions
     pos_x, pos_y = position
-    
+
     # Extract the size
     overlay_width, overlay_height = overlay_size
 
@@ -119,9 +119,9 @@ def draw_overlay(frame, overlay_image, position: tuple[int, int], overlay_size: 
     frame_height, frame_width, _ = overlay_image.shape
     if (frame_width, frame_height) != overlay_size:
         overlay_image = cv2.resize(overlay_image, overlay_size)
-        
-    frame[pos_y:pos_y+overlay_height, pos_x:pos_x+overlay_width] = overlay_image
-    
+
+    frame[pos_y:pos_y + overlay_height, pos_x:pos_x + overlay_width] = overlay_image
+
     return frame
 
 

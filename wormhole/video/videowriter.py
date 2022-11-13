@@ -21,7 +21,7 @@ def write_video(
     height = height or video.height
     max_fps = max_fps or video.max_fps
     frame_controller = FrameController(max_fps, print_fps=print_fps)
-    
+
     # Get File Encoding Format
     if isinstance(encoding, int):
         fourcc = encoding
@@ -44,25 +44,25 @@ def write_video(
             # TODO: Potentially support more codecs and formats in the future?
             logging.warning("Unknown File Encoding Format. Using OepnCV Default.")
             fourcc = -1
-    
+
     # Create File Writer Object
     video_writer = cv2.VideoWriter(filename, fourcc, max_fps, (width, height))
-    
+
     # Sanity Check
     if not video_writer.isOpened():
         raise Exception("Video Writer Failed to Initialize!")
-    
+
     while True:
         # Sanity Check
         if not video_writer.isOpened():
             raise Exception("Video Writer Suddenly Failed!")
-        
+
         # Get the next frame
         frame = video.get_frame()
-        
+
         # Resize frame or else the video will break
         frame = cv2.resize(frame, (width, height))
-        
+
         # Write the frame to file
         video_writer.write(frame)
         frame_controller.next_frame()

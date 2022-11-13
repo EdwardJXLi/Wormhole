@@ -59,7 +59,7 @@ class AbstractVideo():
             except Exception as error:
                 logging.error(f"Error While Running Frame Modifier {modifier}")
                 traceback.print_exc()
-                
+
                 # Render error to video frame
                 draw_text(self._frame, "ERROR!", (10, 60), font_color=(0, 0, 255), font_size=2, font_stroke=4)
                 draw_text(self._frame, f"Error While Running Frame Modifier {modifier}!", (10, 100))
@@ -116,4 +116,3 @@ class AbstractVideo():
         except Exception as e:
             print(f"Error while processing error frame!!!!! {e}")
             print(f"Something is seriously wrong with this video object or this instance of Wormhole!")
-            
