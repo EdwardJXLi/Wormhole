@@ -24,6 +24,7 @@ setuptools.setup(
     description='Simple and Hackable Realtime Video Streaming Engine',
     author='Edward Li',
     url='https://github.com/RadioactiveHydra/Wormhole/',
+    python_requires='>=3.9',
     packages=['wormhole', 'wormhole.streamer', 'wormhole.video', 'wormhole.viewer', 'wormhole.assets'],
     package_data={'wormhole.assets':['*']},
     install_requires=requirements,
