@@ -19,8 +19,8 @@ for l in open("requirements.txt"):
     requirements.append(l.strip())
 
 setuptools.setup(
-    name='wormhole',
-    version="0.1.0",  # Temporary as I work out how to upload to pypi
+    name='wormhole-streaming',
+    version="1.0.0",
     description='Simple and Hackable Realtime Video Streaming Engine',
     author='Edward Li',
     url='https://github.com/RadioactiveHydra/Wormhole/',
@@ -30,7 +30,8 @@ setuptools.setup(
     long_description=readme_markdown,   
     long_description_content_type='text/markdown',
     project_urls={
-        "Bug Reports": f"https://github.com/RadioactiveHydra/Wormhole/issues",
+        "Source Code": "https://github.com/RadioactiveHydra/Wormhole",
+        "Bug Reports": "https://github.com/RadioactiveHydra/Wormhole/issues",
         "Demo": "https://demo.wormhole.hydranet.dev/",
         "Discord": "https://discord.gg/9QF2bPc",
     }
