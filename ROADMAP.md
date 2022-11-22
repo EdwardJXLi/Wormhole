@@ -87,6 +87,8 @@ Of course, this project won't be done in just over a weekend or two. Wormhole's 
     - [ ] Chunking (new file every x minutes)
     - [ ] Autodetect Video Capabilities
     - [ ] Controllable Video Thread
+- [ ] Migrate setup to new config and/or backend
+- [ ] Look into using poetry or some other dependency management system.
 - [ ] Interactive Shell Fix / Support
 
 ## Generation 3
